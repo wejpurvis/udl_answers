@@ -1,0 +1,224 @@
+\documentclass[12pt]{report}
+
+% Packages
+\usepackage{acronym}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{epigraph}
+\usepackage{geometry}
+\usepackage{graphicx}
+%\usepackage{mdframed}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{transparent}
+\usepackage[hidelinks, colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage[backend=biber, style=ieee]{biblatex}
+%\addbibresource{cdt_app.bib}
+
+% Acronym set-up
+% Command to insert acronyms with a temporary color change
+\newcommand{\myAcro}[1]{{\hypersetup{linkcolor=black}\acl{#1}}} % For acronym list (full form)
+\newcommand{\myAcroLink}[1]{{\hypersetup{linkcolor=black}\acs{#1}}}
+
+% Document geometry setup
+\geometry{
+    a4paper,
+    margin=2cm,
+    top=1cm,    % Adjust top margin
+    bottom=1cm,  % Adjust bottom margin
+    headheight=14.5pt,
+    includeheadfoot
+}
+
+\pagestyle{fancy} % Use fancy style for all pages
+\fancyhf{} % Clear all header and footer fields
+
+% Header
+\fancyhead[L]{{\transparent{0.5}Chapter \udlchap{} Questions}} % Left header
+\fancyhead[R]{{\transparent{0.5}wp289}} % Right header
+
+% Footer
+\fancyfoot[L]{\transparent{0.5}Understanding Deep Learning} % Left footer
+\fancyfoot[R]{\transparent{0.5}\thepage} % Right footer
+
+% Define line thickness
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Redefining plain page style if needed
+\fancypagestyle{plain}{ % Applies to chapter beginnings and similar
+  \fancyhf{} % clear all header and footer fields for plain style
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancyhead[L]{{\transparent{0.5}Chapter \udlchap{}Questions}}
+  \fancyhead[R]{{\transparent{0.5}wp289}}
+  \fancyfoot[L]{\transparent{0.5}Understanding Deep Learning}
+  \fancyfoot[R]{\transparent{0.5}\thepage}
+}
+
+% Customise Chapter Headings
+\titleformat{\chapter}
+    {\normalfont\LARGE\bfseries}
+    {\thechapter.}
+    {1em}
+    {}
+\titlespacing*{\chapter}{0pt}{-20pt}{\baselineskip}
+
+% Customise section spacing
+\titlespacing*{\section}{0pt}{\baselineskip}{0.5\baselineskip}
+
+% Adjusting space around figures
+\setlength{\floatsep}{5pt}
+\setlength{\textfloatsep}{5pt}
+
+% Adjusting caption spacing
+\captionsetup{aboveskip=5pt, belowskip=5pt}
+
+% Format paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}  % Adjust the value as needed
+
+% Adjust list spacing
+%\setlist[enumerate]{before=\vspace{0.5em}, after=\vspace{0.5em}}
+\setlist[enumerate]{before=\vspace{-0.5\baselineskip}, after=\vspace{-0.5\baselineskip}}
+
+% Customise question boxes
+\usepackage[framemethod=TikZ]{mdframed}
+\mdfsetup{
+    backgroundcolor=gray!20,
+    innertopmargin=10pt,
+    innerbottommargin=10pt,
+    skipbelow=0pt 
+}
+
+\def\udlchap{2}
+\renewcommand{\thesubsection}{Problem \udlchap.\arabic{subsection}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\section*{Chapter 2: Supervised Learning}
+
+\subsection{}
+\begin{mdframed}
+    To walk ``downhill'' on the loss function (equation~\eqref{eq:2_5}), we measure its gradient with respect to the parameters $\phi_{0}$ and $\phi_{1}$. Calculate the expressions for the slopes $\partial L / \partial \phi_{0}$ and $\partial L / \partial \phi_{1}$.
+
+    \begin{align*}
+        \text{L}[\phi] & = \sum_{i=1}^{I}(\text{f}[x_{i}, \boldsymbol{\phi}]-y_{i})^{2} \\
+                       & = \sum_{i=1}^{I}(\phi_{0} + \phi_{1}x_{i} - y_{i})^{2}
+        \label{eq:2_5}
+        \tag{2.5}
+    \end{align*}
+\end{mdframed}
+
+\begin{equation}
+    \frac{\partial L}{\partial \phi_{0}} = 2\sum_{i=1}^{I}(\phi_{0} + \phi_{1}x_{i} - y_{i})
+    \label{eq:phi0}
+\end{equation}
+
+\begin{equation}
+    \frac{\partial L}{\partial \phi_{1}} = 2\sum_{i=1}^{I}x_{i}(\phi_{0} + \phi_{1}x_{i} - y_{i})
+    \label{eq:phi1}
+\end{equation}
+
+\subsection{}
+\begin{mdframed}
+    Show that we can find the minimum of the loss function in closed form by setting the expression for the derivatives from problem 2.1 to zero and solving for $\phi_{0}$ and $\phi_{1}$. Note that this works for linear regression but not for more complex models; this is why we use iterative model fitting methods like gradient descent (figure 2.4)
+\end{mdframed}
+
+Setting~\eqref{eq:phi0} and~\eqref{eq:phi1} to zero, we have:
+
+\begin{align}
+    \sum_{i=1}^{I}(\phi_{0} + \phi_{1}x_{i} - y_{i})              & = 0  \\
+    \phi_{0}I + \phi_{1}\sum_{i=1}^{I}x_{i} - \sum_{i=1}^{I}y_{i} & = 0,
+    \label{eq:phi0_zero}
+\end{align}
+
+and
+
+\begin{align}
+    \sum_{i=1}^{I}x_{i}(\phi_{0} + \phi_{1}x_{i} - y_{i})                                    & = 0  \\
+    \phi_{0}\sum_{i=1}^{I}x_{i} + \phi_{1}\sum_{i=1}^{I}x_{i}^{2} - \sum_{i=1}^{I}x_{i}y_{i} & = 0.
+    \label{eq:phi1_zero}
+\end{align}
+
+For simplicity, use the following substitutions:
+
+\begin{itemize}
+    \item $S_{x} = \sum_{i=1}^{I}x_{i}$
+    \item $S_{y} = \sum_{i=1}^{I}y_{i}$
+    \item $S_{xx} = \sum_{i=1}^{I}x_{i}^{2}$
+    \item $S_{xy} = \sum_{i=1}^{I}x_{i}y_{i}$
+\end{itemize}
+
+Meaning that equations~\eqref{eq:phi0_zero} and~\eqref{eq:phi1_zero} become:
+
+\begin{align}
+    I\phi_{0} + S_{x}\phi_{1} - S_{y}       & = 0
+    \label{eq:phi0_zero_sub}                      \\
+    S_{x}\phi_{0} + S_{xx}\phi_{1} - S_{xy} & = 0
+    \label{eq:phi1_zero_sub}
+\end{align}
+
+Solving for $\phi_{0}$ from equation~\eqref{eq:phi0_zero_sub}:
+
+\begin{equation}
+    \phi_{0} = \frac{S_{y} - S_{x}\phi_{1}}{I}
+    \label{eq:phi0_sol}
+\end{equation}
+
+Substituting~\eqref{eq:phi0_sol} into equation~\eqref{eq:phi1_zero_sub}:
+
+\begin{align}
+    S_{x}\left(\frac{S_{y} - S_{x}\phi_{1}}{I}\right) + S_{xx}\phi_{1} - S_{xy}       & = 0 \\
+    \frac{S_{x}S_{y}}{I} - \frac{S_{x}^{2}\phi_{1}}{I} + S_{xx}\phi_{1} - S_{xy}      & = 0 \\
+    \phi_{1}\left(S_{xx} - \frac{S_{x}^{2}}{I}\right) + \frac{S_{x}S_{y}}{I} - S_{xy} & = 0 \\
+\end{align}
+Therefore,
+\begin{align}
+    \phi_{1} & = \frac{S_{xy}-S_{x}S_{y}/I}{S_{xx}-S_{x}^{2}/I} \\
+    \null\notag                                                 \\
+    \phi_{1} & = \frac{IS_{xy}-S_{x}S_{y}}{IS_{xx}-S_{x}^{2}}
+    \label{eq:phi1_sol}
+\end{align}
+
+Substituting~\eqref{eq:phi1_sol} into~\eqref{eq:phi0_sol} we can get an equation for $\phi_{0}$:
+
+\begin{equation}
+    \phi_{0} = \frac{S_{y}S_{xx}-S{x}S_{xy}}{I(IS_{xx}-S_{x}^{2})}
+    \label{eq:phi0_sol_final}
+\end{equation}
+
+
+
+\subsection{}
+\begin{mdframed}
+    Consider reformulating linear regression as a generative model, so we have $x = \text{g}[y, \boldsymbol{\phi}] = \phi_{0}$ + $\phi_{1}y$. What is the new loss function? Find an expression for the inverse function $y = \text{g}^{-1}[x, \boldsymbol{\phi}]$., that we would use to perform inference. Will this model make the same predictions as the discriminative version for a given training set $\{x_{i}, y_{i}\}$? One way to establish this is to write code that fits a line to three data points using both methods and see if the result is the same.
+\end{mdframed}
+
+The new loss function is given by:
+
+\begin{equation}
+    \text{L}[\phi] = \sum_{i=1}^{I}(x_{i} - (\phi_{0} + \phi_{1}y_{i}))^{2}
+    \label{eq:gen_loss}
+\end{equation}
+
+where $x_{i}$ are the observed values, and $phi_{0} + \phi_{1}y_{i}$ are the model predictions.
+
+Given the model $x = = \phi_{0}$ + $\phi_{1}y$, solving for $y$ gives:
+
+\begin{equation}
+    y = \frac{x - \phi_{0}}{\phi_{1}} = \text{g}^{-1}[x, \boldsymbol{\phi}]
+\end{equation}
+
+The discriminative model fits parameters to minimise the loss function in equation~\eqref{eq:2_5}, while the generative model fits parameters to minimise the loss function in equation~\eqref{eq:gen_loss}. For the same dataset, the two models generally will not make the same predictions. This is because the generative model assumes $x$ as a function of $y$, while the discriminative model assumes $y$ as a function of $x$, effectively ``flipping'' the dependent and independent variables.
+\end{document}
