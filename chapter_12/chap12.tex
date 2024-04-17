@@ -295,10 +295,34 @@ In conclusion, adding a new token requires extending the self-attention calculat
     Computation in vision transformers expands quadratically with the number of patches. Devise two methods to reduce the computation using the principles from figure 12.15.
 \end{mdframed}
 
+\begin{enumerate}
+    \item \textbf{Local attention mechanism}: Instead of computing attention between all pairs of patches (i.e., figure 12.15a), only compute attention between patches that are close to each other. This can be achieved by introducing a convolutional structure similar to what's described for the encoder case in figure 12.15c: Instead of allowing every token to interact with every other token, we can limit the interactions to a local neighborhood around each patch. By doing so, we reduce the quadratic complexity associated with the number of patches.
+    \item \textbf{Global Tokens and hierarchical attention}: Similar to figure 12.5h, introduce global tokens which interact with all image patches to capture the global context of the image. By using global tokens and a hierarchical attention mechanism, each patch initially attends only to the global tokens, and then attends to other patches based on the information from the global tokens. This reduces the number of pairwise interactions between patches, reducing the overall computation.
+\end{enumerate}
+
+\newpage
 \subsection{}
 \begin{mdframed}
     Consider representing an image with a grid of $16 \times 16$ patches, each represented by a patch embedding of length 512. Compare the amount of computation required in the DaViT transformer to perform attention (i) between the patches, using all of the channels, and (ii) between the channels, using all of the patches.
 \end{mdframed}
+
+\textit{Dual attention vision transformers} (DaViT) alternates two types of transformers. In the first, image patches attend to one another, and the self-attention computation uses all the channels. In the second, the channels attend to one another, and the self-attention computation uses all the image patches.
+
+The amount of computation required in the DaViT transformer to perform attention between all the patches and using all of the channels can be calculated as follows:
+
+\begin{itemize}
+    \item Number of computations per patch: $16 \times 16 \times 512 = 131,072$
+    \item Total number of computations across all patches: $16 \times 16 \times 131,072 = 33,554,432$
+\end{itemize}
+
+The amount of computation required too perform attention between the channels, using all of the patches can be calculated as follows:
+
+\begin{itemize}
+    \item Number of computations per channel: $16 \times 16 \times 512 = 131,072$
+    \item Total number of computations across all channels: $512 \times 131,072 = 67,108,864$
+\end{itemize}
+
+The amount of computation required for attention between channels using all patches is approximately double the computation required for attention between patches using all channels.
 
 \subsection{}
 \begin{mdframed}
@@ -311,5 +335,11 @@ In conclusion, adding a new token requires extending the self-attention calculat
     Consider replacing $\text{exp}[\mathbf{k}^{T}_{m}\mathbf{q}_{n}]$ with the dot product $\mathbf{g}[\mathbf{k}_{m}]^{T}\mathbf{g}[\mathbf{q}_{n}]$ where $\mathbf{g}[\bullet]$ is a nonlinear  transformation. Show how this makes the computation of the attention weights more eﬀicient.
 \end{mdframed}
 
-Answer for this one is given
+\begin{equation*}
+    \text{a}[\mathbf{x}_{m}, \mathbf{x}_{n}] = \frac{\mathbf{g}[\mathbf{k}_{m}]^{T}\mathbf{g}[\mathbf{q}_{n}]}{\sum_{m'=1}^{N} \mathbf{g}[\mathbf{k}_{m'}]^{T}\mathbf{g}[\mathbf{q}_{n}]} = \frac{\mathbf{g}[\mathbf{k}_{m}]^{T}\mathbf{g}[\mathbf{q}_{n}]}{\left(\sum_{m'=1}^{N} \mathbf{g}[\mathbf{k}_{m'}]^{T}\right)\mathbf{g}[\mathbf{q}_{n}]}
+\end{equation*}
+
+Using this formulation, the computation of the attention weights is more efficient because the summation can be computed before the dot product $\mathbf{g}[\mathbf{k}_{m}]^{T}\mathbf{g}[\mathbf{q}_{n}]$. In practice, this means that the computation of the attention is reduced from $\mathcal{O}(N^{2}D)$ to $\mathcal{O}(ND)$, making the computation more efficient.
+
+
 \end{document}
