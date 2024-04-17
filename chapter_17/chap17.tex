@@ -1,0 +1,176 @@
+\documentclass[12pt]{report}
+
+% Packages
+\usepackage{acronym}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{epigraph}
+\usepackage{geometry}
+\usepackage{graphicx}
+%\usepackage{mdframed}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{transparent}
+\usepackage[hidelinks, colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage[backend=biber, style=ieee]{biblatex}
+%\addbibresource{cdt_app.bib}
+
+% Acronym set-up
+% Command to insert acronyms with a temporary color change
+\newcommand{\myAcro}[1]{{\hypersetup{linkcolor=black}\acl{#1}}} % For acronym list (full form)
+\newcommand{\myAcroLink}[1]{{\hypersetup{linkcolor=black}\acs{#1}}}
+
+% Document geometry setup
+\geometry{
+    a4paper,
+    margin=2cm,
+    top=1cm,    % Adjust top margin
+    bottom=1cm,  % Adjust bottom margin
+    headheight=14.5pt,
+    includeheadfoot
+}
+
+\pagestyle{fancy} % Use fancy style for all pages
+\fancyhf{} % Clear all header and footer fields
+
+% Header
+\fancyhead[L]{{\transparent{0.5}Chapter \udlchap{} Questions}} % Left header
+\fancyhead[R]{{\transparent{0.5}wp289}} % Right header
+
+% Footer
+\fancyfoot[L]{\transparent{0.5}Understanding Deep Learning} % Left footer
+\fancyfoot[R]{\transparent{0.5}\thepage} % Right footer
+
+% Define line thickness
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Redefining plain page style if needed
+\fancypagestyle{plain}{ % Applies to chapter beginnings and similar
+  \fancyhf{} % clear all header and footer fields for plain style
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancyhead[L]{{\transparent{0.5}Chapter \udlchap{}Questions}}
+  \fancyhead[R]{{\transparent{0.5}wp289}}
+  \fancyfoot[L]{\transparent{0.5}Understanding Deep Learning}
+  \fancyfoot[R]{\transparent{0.5}\thepage}
+}
+
+% Customise Chapter Headings
+\titleformat{\chapter}
+    {\normalfont\LARGE\bfseries}
+    {\thechapter.}
+    {1em}
+    {}
+\titlespacing*{\chapter}{0pt}{-20pt}{\baselineskip}
+
+% Customise section spacing
+\titlespacing*{\section}{0pt}{\baselineskip}{0.5\baselineskip}
+
+% Adjusting space around figures
+\setlength{\floatsep}{5pt}
+\setlength{\textfloatsep}{5pt}
+
+% Adjusting caption spacing
+\captionsetup{aboveskip=5pt, belowskip=5pt}
+
+% Format paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}  % Adjust the value as needed
+
+% Adjust list spacing
+%\setlist[enumerate]{before=\vspace{0.5em}, after=\vspace{0.5em}}
+\setlist[enumerate]{before=\vspace{-0.5\baselineskip}, after=\vspace{-0.5\baselineskip}}
+
+% Customise question boxes
+\usepackage[framemethod=TikZ]{mdframed}
+\mdfsetup{
+    backgroundcolor=gray!20,
+    innertopmargin=10pt,
+    innerbottommargin=10pt,
+    skipbelow=0pt 
+}
+
+\def\udlchap{17}
+\renewcommand{\thesubsection}{Problem \udlchap.\arabic{subsection}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\subsection{}
+\begin{mdframed}
+    How many parameters are needed to create a 1D mixture of Gaussians with $n=5$ components (equation 17.4)? State the possible range of values that each parameter could take.
+
+    \begin{equation*}
+        P(x) = \sum_{i=1}^{n} \lambda_{n} \cdot \text{Norm}_{x}[\mu_{n}, \sigma_{n}^{2}]
+        \label{eq:17.4}
+        \tag{17.4}
+    \end{equation*}
+\end{mdframed}
+
+\subsection{}
+\begin{mdframed}
+    A function is concave if its second derivative is less than or equal to zero everywhere. Show that this is true for the function $g(x) = \log(x)$.
+\end{mdframed}
+
+\subsection{}
+\begin{mdframed}
+    For convex functions, Jensen's inequality works the other way around.
+
+    \begin{equation*}
+        g(\mathbb{E}[x]) \leq \mathbb{E}[g(x)]
+        \tag{17.31}
+    \end{equation*}
+
+    A function is convex if its second derivative is greater than or equal to zero everywhere. Show that the function $g(x) = x^{2n}$ is convex for arbitrary $n \in [1,2, \dots]$. Use this result with Jensen's inequality to show that the square of the mean $\mathbb{E}[x]$ of a distribution $P(x)$ must be less than or equal to its second moment $\mathbb{E}[x^{2}]$.
+\end{mdframed}
+
+\subsection{}
+\begin{mdframed}
+    Show that the ELBO, as expressed in equation 17.18, can alternatively be derived from the KL divergence between the variational distribution $q(\mathbf{z}| \mathbf{x})$ and the true posterior distribution $P(\mathbf{z}|\mathbf{x}, \boldsymbol{\phi})$:
+
+    \begin{equation*}
+        D_{KL}[q(\mathbf{z}|\mathbf{x})||P(\mathbf{z}|\mathbf{x}, \boldsymbol{\phi})] = \int q(\mathbf{z}|\mathbf{x}) \log \left[ \frac{q(\mathbf{z}|\mathbf{x})}{P(\mathbf{z}|\mathbf{x}, \boldsymbol{\phi})} \right] d\mathbf{z}
+        \tag{17.32}
+    \end{equation*}
+
+    Start by using Bayes' rule (equation 17.19).
+\end{mdframed}
+
+\subsection{}
+\begin{mdframed}
+    The reparameterization trick computes the derivative of an expression of a function $f(x)$:
+
+    \begin{equation*}
+        \frac{\partial}{\partial \boldsymbol{\phi}}\mathbb{E}_{P(x|\boldsymbol{\phi})}[f(x)]
+    \end{equation*}
+
+    with respect to the parameters $\boldsymbol{\phi}$ of the distribution $P(x|\boldsymbol{\phi})$. Show that this derivative can also be computed as:
+
+    \begin{align*}
+        \frac{\partial}{\partial \boldsymbol{\phi}}\mathbb{E}_{P(x|\boldsymbol{\phi})}[f(x)] & = \mathbb{E}_{P(x|\boldsymbol{\phi})} \left[ f(x) \frac{\partial}{\partial \boldsymbol{\phi}} \log(P(x|\boldsymbol{\phi})) \right] \\
+                                                                                             & \approx \frac{1}{I} \sum_{i=1}^{I} f(x_{i})\frac{\partial}{\partial \boldsymbol{\phi}} \log(P(x|\boldsymbol{\phi})).
+    \end{align*}
+
+    This method is known as the REINFORCE algorithm or score function estimator.
+\end{mdframed}
+
+\subsection{}
+\begin{mdframed}
+    Why is it better to use spherical linear interpolation rather than regular linear interpolation when moving between points in the latent space? Hint: consider figure 8.13
+\end{mdframed}
+
+\subsection{}
+\begin{mdframed}
+    Derive the EM algorithm for the 1D mixture of Gaussians algorithm with $N$ components. To do this, you need to (i) find an expression for the posterior distribution $P(z|x)$ over the latent variable $z \in \{1, 2, \dots , N\}$ for a data point $x$ and (ii) find an expression that updates the evidence lower bound given the posterior distributions for all of the data points. You will need to use Lagrange multipliers to ensure that the weights $\lambda_{1}, \dots, \lambda_{N}$ of the Gaussians sum to one.
+\end{mdframed}
+\end{document}

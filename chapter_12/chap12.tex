@@ -1,0 +1,315 @@
+\documentclass[12pt]{report}
+
+% Packages
+\usepackage{acronym}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{epigraph}
+\usepackage{geometry}
+\usepackage{graphicx}
+%\usepackage{mdframed}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{transparent}
+\usepackage[hidelinks, colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage[backend=biber, style=ieee]{biblatex}
+%\addbibresource{cdt_app.bib}
+
+% Acronym set-up
+% Command to insert acronyms with a temporary color change
+\newcommand{\myAcro}[1]{{\hypersetup{linkcolor=black}\acl{#1}}} % For acronym list (full form)
+\newcommand{\myAcroLink}[1]{{\hypersetup{linkcolor=black}\acs{#1}}}
+
+% Document geometry setup
+\geometry{
+    a4paper,
+    margin=2cm,
+    top=1cm,    % Adjust top margin
+    bottom=1cm,  % Adjust bottom margin
+    headheight=14.5pt,
+    includeheadfoot
+}
+
+\pagestyle{fancy} % Use fancy style for all pages
+\fancyhf{} % Clear all header and footer fields
+
+% Header
+\fancyhead[L]{{\transparent{0.5}Chapter \udlchap{} Questions}} % Left header
+\fancyhead[R]{{\transparent{0.5}wp289}} % Right header
+
+% Footer
+\fancyfoot[L]{\transparent{0.5}Understanding Deep Learning} % Left footer
+\fancyfoot[R]{\transparent{0.5}\thepage} % Right footer
+
+% Define line thickness
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Redefining plain page style if needed
+\fancypagestyle{plain}{ % Applies to chapter beginnings and similar
+  \fancyhf{} % clear all header and footer fields for plain style
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancyhead[L]{{\transparent{0.5}Chapter \udlchap{}Questions}}
+  \fancyhead[R]{{\transparent{0.5}wp289}}
+  \fancyfoot[L]{\transparent{0.5}Understanding Deep Learning}
+  \fancyfoot[R]{\transparent{0.5}\thepage}
+}
+
+% Setup for code listings
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{gray!10},  % Change 'backcolour' to a valid color
+    commentstyle=\color{blue},
+    keywordstyle=\color{magenta},
+    numberstyle=\fontsize{8}{12}\selectfont\color{gray},
+    stringstyle=\color{green!40!black},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=10pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=true,
+    tabsize=2,
+    aboveskip=10pt,
+    belowskip=10pt
+}
+\renewcommand{\lstlistingname}{Code Block}
+
+% Customise Chapter Headings
+\titleformat{\chapter}
+    {\normalfont\LARGE\bfseries}
+    {\thechapter.}
+    {1em}
+    {}
+\titlespacing*{\chapter}{0pt}{-20pt}{\baselineskip}
+
+% Customise section spacing
+\titlespacing*{\section}{0pt}{\baselineskip}{0.5\baselineskip}
+
+% Adjusting space around figures
+\setlength{\floatsep}{5pt}
+\setlength{\textfloatsep}{5pt}
+
+% Adjusting caption spacing
+\captionsetup{aboveskip=5pt, belowskip=5pt}
+
+% Format paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}  % Adjust the value as needed
+
+% Adjust list spacing
+%\setlist[enumerate]{before=\vspace{0.5em}, after=\vspace{0.5em}}
+\setlist[enumerate]{before=\vspace{-0.5\baselineskip}, after=\vspace{-0.5\baselineskip}}
+
+% Customise question boxes
+\usepackage[framemethod=TikZ]{mdframed}
+\mdfsetup{
+    backgroundcolor=gray!20,
+    innertopmargin=10pt,
+    innerbottommargin=10pt,
+    skipbelow=0pt 
+}
+
+\def\udlchap{12}
+\renewcommand{\thesubsection}{Problem \udlchap.\arabic{subsection}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\section*{Chapter 12: Transformers}
+
+\subsection{}
+\begin{mdframed}
+    Consider a self-attention mechanism that processes $N$ inputs of length $D$ to produce $N$ outputs of the same size. How many weights and biases are used to compute the queries, keys, and values? How many attention weights $\text{a}[\bullet, \bullet]$ will there be? How many weights and biases would there be in a fully connected network relating all $DN$ inputs to all $DN$ outputs?
+\end{mdframed}
+
+The self attention mechanism is defined in Equation~\eqref{eq:self_attention}.
+
+\begin{equation}
+    \text{Sa}[\mathbf{X}] = \mathbf{V} \cdot \mathbf{Softmax}[\mathbf{K}^{T}\mathbf{Q}]
+    \label{eq:self_attention}
+\end{equation}
+
+Where the values $\mathbf{V}$, keys $\mathbf{K}$, and queries $\mathbf{Q}$ are computed as:
+
+\begin{align}
+    \mathbf{V}[\mathbf{X}] & = \boldsymbol{\beta}_{v}\mathbf{1}^{T} + \boldsymbol{\Omega}_{v}\mathbf{X} \\
+    \mathbf{Q}[\mathbf{X}] & = \boldsymbol{\beta}_{q}\mathbf{1}^{T} + \boldsymbol{\Omega}_{q}\mathbf{X} \\
+    \mathbf{K}[\mathbf{X}] & = \boldsymbol{\beta}_{k}\mathbf{1}^{T} + \boldsymbol{\Omega}_{k}\mathbf{X}
+\end{align}
+
+$\mathbf{X}$ is a $D \times N$ matrix (i.e., $N$ inputs of length $D$). Therefore the biases $\boldsymbol{\beta}_{v}$, $\boldsymbol{\beta}_{q}$, and $\boldsymbol{\beta}_{k}$ are of size $D \times 1$ and the weights $\boldsymbol{\Omega}_{v}$, $\boldsymbol{\Omega}_{q}$, and $\boldsymbol{\Omega}_{k}$ are of size $D \times D$. The number of weights and biases used to compute the queries, keys, and values are:
+
+\begin{equation}
+    \text{Weights} = 3 \times D^{2} \quad \text{Biases} = 3
+\end{equation}
+
+The dimensions of the values $\mathbf{V}[\mathbf{X}]$, queries $\mathbf{Q}[\mathbf{X}]$, and keys $\mathbf{K}[\mathbf{X}]$ are $D \times N$. Therefore, the attention weights $\text{a}[\bullet, \bullet]$ will be of size $N \times N$. The number of attention weights is:
+
+\begin{equation}
+    \text{Attention Weights} = N^{2}
+\end{equation}
+
+\textbf{Fully connected network:} In a fully connected network relating all $DN$ inputs to all $DN$ outputs, the number of weights and biases would be:
+
+\begin{equation}
+    \text{Weights} = D^{2}N^{2} \quad \text{Biases} = N^{2}
+\end{equation}
+
+\newpage
+
+\subsection{}
+\begin{mdframed}
+    Why might we want to ensure that the input to the self-attention mechanism is the same size as the output?
+\end{mdframed}
+
+Keeping the input and output dimensions the same allows for multiple layers of self-attention to be stacked without requiring additional transformation layers to match dimensions between them (e.g. in multiple head self-attention mechanisms). Additionally, keeping the input and output dimensions the same simplifies the network design. Each layer can be treated as a modular block that can be easily understood, implemented, and debugged
+
+\subsection{}
+\begin{mdframed}
+    Show that the self-attention mechanism is equivariant to a permutation $\mathbf{XP}$ of the data $\mathbf{X}$, where $\mathbf{P}$ is a permutation matrix. In other words, show that:
+
+    \begin{equation*}
+        \text{Sa}[\mathbf{XP}] = \text{Sa}[\mathbf{X}]\mathbf{P}
+    \end{equation*}
+\end{mdframed}
+
+Since the linear projections of the keys, values, and queries are applied independently to each row of $\mathbf{X}$, permuting the rows of $\mathbf{X}$ will correspond to permuting the rows of $\mathbf{K}$, $\mathbf{V}$, and $\mathbf{Q}$:
+
+\begin{align}
+    \mathbf{K[XP]} & = \mathbf{KP[X]} \\
+    \mathbf{V[XP]} & = \mathbf{VP[X]} \\
+    \mathbf{Q[XP]} & = \mathbf{QP[X]}
+\end{align}
+
+Substituting these into the self-attention mechanism in Equation~\eqref{eq:self_attention}:
+
+\begin{equation}
+    \text{Sa}[\mathbf{XP}] = \mathbf{VP} \cdot \mathbf{Softmax}[\mathbf{KP}^{T}\mathbf{QP}]
+    \label{eq:permuted_sa}
+\end{equation}
+
+Since $\mathbf{P}$ is a permutation matrix, its transpose is also its inverse, therefore $\mathbf{P}^{T}\mathbf{P} = \mathbf{I}$. Equation~\eqref{eq:permuted_sa} can be rewritten as:
+
+\begin{equation}
+    \text{Sa}[\mathbf{XP}] = \mathbf{VP} \cdot \mathbf{Softmax}[\mathbf{K}^{T}\mathbf{Q}]
+\end{equation}
+
+Which is equivalent to $\text{Sa}[\mathbf{X}]\mathbf{P}$.
+
+\newpage
+
+\subsection{}
+\begin{mdframed}
+    Consider the softmax operation:
+
+    \begin{equation*}
+        y_{i} = \text{softmax}_{i}[\mathbf{z}] = \frac{\text{exp}(z_{i})}{\sum_{j=1}^{5}\text{exp}(z_{j})}
+    \end{equation*}
+
+    in the case where there are five inputs with values $z_{1} = -3$, $z_{2} = 1$, $z_{3} = 100$, $z_{4} = 5$, and $z_{5} = -1$. Compute the $25$ derivatives $\partial y_{i}/\partial z_{j}$. for all $i, j \in \{1,2,3,4,5\}$. What do you conclude?
+\end{mdframed}
+
+When $i = j$, the derivative $\partial y_{i}/\partial z_{j}$ is given by:
+
+\begin{equation}
+    \frac{\partial y_{i}}{\partial z_{i}} = \frac{\text{exp}(z_{i})\sum_{j=1}^{5}\text{exp}(z_{j}) - \text{exp}(z_{i})\text{exp}(z_{i})}{\left(\sum_{j=1}^{5}\text{exp}(z_{j})\right)^{2}} = y_{i}(1 - y_{i})
+\end{equation}
+
+When $i \neq j$, the derivative $\partial y_{i}/\partial z_{j}$ is given by:
+
+\begin{equation}
+    \frac{\partial y_{i}}{\partial z_{j}} = -\frac{\text{exp}(z_{i})\text{exp}(z_{j})}{\left(\sum_{j=1}^{5}\text{exp}(z_{j})\right)^{2}} = -y_{i}y_{j}
+\end{equation}
+
+The code for calculating these derivatives is shown in Code block~\ref{lst:124}.
+\vspace{5pt}
+\begin{lstlisting}[language=Python, caption=Calculate 25 derivates, label=lst:124]
+inputs = [z1, z2, z3, z4, z5]
+
+for i in range(5):
+    for j in range(5):
+        if i == j:
+            di_dj = softmax_i(inputs[i], inputs) * 
+            (1 - softmax_i(inputs[i], inputs))
+            print(f"dy_{i+1}/dz_{j+1} = {di_dj}")
+        else:
+            di_dj = -softmax_i(inputs[i], inputs) * 
+            softmax_i(inputs[j], inputs)
+            print(f"dy_{i+1}/dz_{j+1} = {di_dj}")
+\end{lstlisting}
+
+All of the calculated derivatives are very close to zero. This is due to to $\text{exp}(z_{3})$ being much larger than the other values. The softmax function is therefore very sensitive to the input values, and small changes in the input can lead to large changes in the output. This problem highlights the case of the softmax function ``saturating" where one term dominates and others are near zero.
+
+\subsection{}
+\begin{mdframed}
+    Why is the implementation more efficient if the values, queries, and keys in each of the $H$ heads each have dimensions $D/H$ where $D$ is the original dimension of the data?
+\end{mdframed}
+
+In the multiple head self-attention mechanism, reducing the dimensionality of the values, keys, and queries from $D$ to $D/H$ where $H$ is the number of heads, reduces both the computational cost of the mechanism and the memory required to store these matrices. he cost of computing the dot products in self-attention for each head is proportional to $D/H$ rather than $D$, reducing the complexity per head from $O(D^{2})$ to $O((D/H)^{2})$. This reduction in complexity allows for more heads to be used without increasing the computational cost. The overall complexity across all heads remains $O((D)^{2})$ but the reduction in per-head computation allows more efficient use of parallel architectures.
+
+Additionally, the reduced dimensionality of the values, keys, and queries allows for more heads to be used without increasing the memory requirements, as total number of parameters across all heads remains the same ($H \times (D/H)^{2} = D^{2}/H$), but spreading them across multiple heads means that the model can manage its memory use more flexibly and efficiently.
+
+\subsection{}
+\begin{mdframed}
+    BERT was pre-trained using two tasks. The first task requires the system to predict missing (masked) words. The second task requires the system to classify pairs of sentences as being adjacent or not in the original text. Identify whether each of these tasks is generative or contrastive (see section 9.3.6). Why do you think they used two tasks? Propose two novel contrastive tasks that could be used to pre-train a language model.
+\end{mdframed}
+
+BERT is an encoder model that uses a vocabulary of $30,000$ tokens. The first task during pre-training, which requires the model to predict the missing (masked) words is an example of a \textit{generative} task:The model is required to generate the most likely token that has been masked out. The second task, which requires the model to classify pairs of sentences as being adjacent or not in the original text is an example of a \textit{contrastive} task: The model is required to contrast the similarity between pairs of sentences.
+
+Two examples of a contrastive task that could be used to pre-train a language model are:
+
+\begin{enumerate}
+    \item \textbf{Inverted sentence detection}: Given two sentences, e.g. ``The boy ran quickly'' and ``Quickly ran the boy'', the model needs to identify if the second sentence is a syntactic inversion of the first.
+    \item \textbf{Logical inference verification}: Given two sentences, e.g. ``John bought a new laptop'' and ``John has a new laptop'', the model needs to determine if the second sentence is a logical inference of the first.
+\end{enumerate}
+
+Pre-training language models on a combination of generative and contrastive tasks can lead to more comprehensive language understanding, preparing the model for complex language processing tasks that require both generation and fine-grained discrimination capabilities.
+
+\subsection{}
+\begin{mdframed}
+    Consider adding a new token to a precomputed masked self-attention mechanism with $N$ tokens. Describe the extra computation that must be done to incorporate this new token.
+\end{mdframed}
+
+In the self-attention mechanism, three matrices are computed for every input token: the keys, queries, and values. Therefore, adding a new token would require computing the keys, queries, and values for the new token. Although the existing weights can be used for the computation of these new matrices.
+
+The attention weights would then be computed as dot products of the new token's keys and all other tokens' queries, i.e., The size of the attention matrix increases from $N \times N$ to $(N+1) \times (N+1)$.
+
+In conclusion, adding a new token requires extending the self-attention calculations to account for interactions between this new token and all existing tokens, updating the softmax-normalised attention weights, and recalculating the output vectors.
+
+\subsection{}
+\begin{mdframed}
+    Computation in vision transformers expands quadratically with the number of patches. Devise two methods to reduce the computation using the principles from figure 12.15.
+\end{mdframed}
+
+\subsection{}
+\begin{mdframed}
+    Consider representing an image with a grid of $16 \times 16$ patches, each represented by a patch embedding of length 512. Compare the amount of computation required in the DaViT transformer to perform attention (i) between the patches, using all of the channels, and (ii) between the channels, using all of the patches.
+\end{mdframed}
+
+\subsection{}
+\begin{mdframed}
+    Attention weights are usually computed as:
+
+    \begin{equation*}
+        \text{a}[\mathbf{x}_{m}, \mathbf{x}_{n}] = \text{softmax}_{m}\left[\mathbf{k}^{T}_{\bullet}\mathbf{q}_{n}\right] = \frac{\text{exp}[\mathbf{k}^{T}_{m}\mathbf{q}_{n}]}{\sum_{m'=1}^{N} \text{exp}[\mathbf{k}^{T}_{m'}\mathbf{q}_{n}]}
+    \end{equation*}
+
+    Consider replacing $\text{exp}[\mathbf{k}^{T}_{m}\mathbf{q}_{n}]$ with the dot product $\mathbf{g}[\mathbf{k}_{m}]^{T}\mathbf{g}[\mathbf{q}_{n}]$ where $\mathbf{g}[\bullet]$ is a nonlinear  transformation. Show how this makes the computation of the attention weights more eﬀicient.
+\end{mdframed}
+
+Answer for this one is given
+\end{document}

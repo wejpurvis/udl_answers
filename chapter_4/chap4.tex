@@ -1,0 +1,288 @@
+ \documentclass[12pt]{report}
+
+% Packages
+\usepackage{acronym}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{amsfonts}
+\usepackage{epigraph}
+\usepackage{geometry}
+\usepackage{graphicx}
+%\usepackage{mdframed}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{transparent}
+\usepackage[hidelinks, colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage[backend=biber, style=ieee]{biblatex}
+%\addbibresource{cdt_app.bib}
+
+% Acronym set-up
+% Command to insert acronyms with a temporary color change
+\newcommand{\myAcro}[1]{{\hypersetup{linkcolor=black}\acl{#1}}} % For acronym list (full form)
+\newcommand{\myAcroLink}[1]{{\hypersetup{linkcolor=black}\acs{#1}}}
+
+% Document geometry setup
+\geometry{
+    a4paper,
+    margin=2cm,
+    top=1cm,    % Adjust top margin
+    bottom=1cm,  % Adjust bottom margin
+    headheight=14.5pt,
+    includeheadfoot
+}
+
+\pagestyle{fancy} % Use fancy style for all pages
+\fancyhf{} % Clear all header and footer fields
+
+% Header
+\fancyhead[L]{{\transparent{0.5}Chapter \udlchap{} Questions}} % Left header
+\fancyhead[R]{{\transparent{0.5}wp289}} % Right header
+
+% Footer
+\fancyfoot[L]{\transparent{0.5}Understanding Deep Learning} % Left footer
+\fancyfoot[R]{\transparent{0.5}\thepage} % Right footer
+
+% Define line thickness
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Redefining plain page style if needed
+\fancypagestyle{plain}{ % Applies to chapter beginnings and similar
+  \fancyhf{} % clear all header and footer fields for plain style
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancyhead[L]{{\transparent{0.5}Chapter \udlchap{}Questions}}
+  \fancyhead[R]{{\transparent{0.5}wp289}}
+  \fancyfoot[L]{\transparent{0.5}Understanding Deep Learning}
+  \fancyfoot[R]{\transparent{0.5}\thepage}
+}
+
+% Customise Chapter Headings
+\titleformat{\chapter}
+    {\normalfont\LARGE\bfseries}
+    {\thechapter.}
+    {1em}
+    {}
+\titlespacing*{\chapter}{0pt}{-20pt}{\baselineskip}
+
+% Customise section spacing
+\titlespacing*{\section}{0pt}{\baselineskip}{0.5\baselineskip}
+
+% Adjusting space around figures
+\setlength{\floatsep}{5pt}
+\setlength{\textfloatsep}{5pt}
+
+% Adjusting caption spacing
+\captionsetup{aboveskip=5pt, belowskip=5pt}
+
+% Format paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}  % Adjust the value as needed
+
+% Adjust list spacing
+%\setlist[enumerate]{before=\vspace{0.5em}, after=\vspace{0.5em}}
+\setlist[enumerate]{before=\vspace{-0.5\baselineskip}, after=\vspace{-0.5\baselineskip}}
+
+% Customise question boxes
+\usepackage[framemethod=TikZ]{mdframed}
+\mdfsetup{
+    backgroundcolor=gray!20,
+    innertopmargin=10pt,
+    innerbottommargin=10pt,
+    skipbelow=0pt 
+}
+
+\def\udlchap{4}
+\renewcommand{\thesubsection}{Problem \udlchap.\arabic{subsection}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\section*{Chapter 4: Deep Neural Networks}
+
+\subsection{}
+\begin{mdframed}
+    Consider composing two neural networks in figure 4.8. Draw a plot of the relationship between the input $x$ and output $y'$ for $x \in [-1,1]$.
+\end{mdframed}
+\subsection{}
+
+\begin{mdframed}
+    Identify the four hyperparameters in figure 4.6.
+\end{mdframed}
+
+\begin{enumerate}
+    \item Activation function $\mathbf{a}$
+    \item Number of hidden layers $\mathbf{h}_{K}$
+    \item Weights $\boldsymbol{\Omega}_{K}$
+    \item Biases $\boldsymbol{\beta}_{K}$
+\end{enumerate}
+
+\subsection{}
+\begin{mdframed}
+    Using the non-negative homogeneity property of the $\text{ReLU}$ function, show that:
+    \begin{equation*}
+        \text{ReLU}\left[\boldsymbol{\beta}_{1} + \lambda_{1}\cdot\boldsymbol{\Omega}_{1}\text{ReLU}\left[\boldsymbol{\beta}_{0} +\lambda_{0}\cdot\boldsymbol{\Omega}_{0}\mathbf{x}\right]\right]
+        = \lambda_{0}\lambda_{1}\cdot\text{ReLU}
+        \left[\frac{1}{\lambda_{0}\lambda_{1}}\boldsymbol{\beta}_{1} + \boldsymbol{\Omega}_{1}\text{ReLU}\left[\frac{1}{\lambda_{0}}\boldsymbol{\beta}_{0}+\boldsymbol{\Omega}_{0}\mathbf{x}\right]\right]
+    \end{equation*}
+    Where $\lambda_{0}$ and $\lambda_{1}$ are non-negative scalars. From this we see that the weight matrices can be rescaled by any magnitude as long as the biases are also adjusted, and the scale factors can be re-applied at the end of the network
+\end{mdframed}
+
+We know that for $\alpha \in \mathbb{R}^{+}$:
+
+\begin{equation*}
+    \text{ReLU}[\alpha \cdot z] = \alpha \cdot \text{ReLU}[z]
+\end{equation*}
+
+Therefore, dividing the LHS of the above equation by $\lambda_{1}$:
+
+\begin{equation*}
+    \text{ReLU}\left[\boldsymbol{\beta}_{1} + \lambda_{1}\cdot\boldsymbol{\Omega}_{1}\text{ReLU}\left[\boldsymbol{\beta}_{0} +\lambda_{0}\cdot\boldsymbol{\Omega}_{0}\mathbf{x}\right]\right]
+    =
+    \lambda_{1}\cdot
+    \text{ReLU}\left[\frac{1}{\lambda_{1}}\boldsymbol{\beta}_{1} + \boldsymbol{\Omega}_{1}\text{ReLU}\left[\boldsymbol{\beta}_{0} +\lambda_{0}\cdot\boldsymbol{\Omega}_{0}\mathbf{x}\right]\right]
+\end{equation*}
+
+And dividing the inner $\text{ReLU}$ by $\lambda_{0}$:
+
+\begin{equation*}
+    \lambda_{1}\cdot
+    \text{ReLU}\left[\frac{1}{\lambda_{1}}\boldsymbol{\beta}_{1} + \boldsymbol{\Omega}_{1}\text{ReLU}\left[\boldsymbol{\beta}_{0} +\lambda_{0}\cdot\boldsymbol{\Omega}_{0}\mathbf{x}\right]\right]
+    =
+    \lambda_{0}\lambda_{1}\cdot\text{ReLU}
+    \left[\frac{1}{\lambda_{0}\lambda_{1}}\boldsymbol{\beta}_{1} + \boldsymbol{\Omega}_{1}\text{ReLU}\left[\frac{1}{\lambda_{0}}\boldsymbol{\beta}_{0}+\boldsymbol{\Omega}_{0}\mathbf{x}\right]\right]
+\end{equation*}
+
+\subsection{}
+\begin{mdframed}
+    Write out the equations for a deep neural network that takes $D_{i} = 5$ inputs, $D_{o} = 4$ outputs and has three hidden layers of sizes $D_{1} = 20, D_{2} = 10, \text{and} D_{3} = 7$, respectively, in both the forms of equations 4.15 and 4.16. What are the sizes of each weight matrix $\boldsymbol{\Omega}_{\bullet}$ and bias vector $\boldsymbol{\beta}_{\bullet}$?
+\end{mdframed}
+
+The network has three layers, therefore:
+
+\begin{align*}
+    \mathbf{h}_{3} & = \mathbf{a}[\boldsymbol{\beta}_{2} + \boldsymbol{\Omega}_2\mathbf{h}_{2}] \\
+    \mathbf{y}     & = \boldsymbol{\beta}_{3} + \boldsymbol{\Omega}_{3}\mathbf{h}_{3}
+\end{align*}
+
+Where $\boldsymbol{\beta}_{3}$ has size $4 \times 1$ $(=D_{o})$, $\boldsymbol{\Omega}_{3}$ has size $4\times7$ $(=D_{o} \times D_{3})$, and $\mathbf{h}_{3}$ has size $7 \times 1$ $(D_{3}$. Equivalently, the network can be written as a single function:
+
+\begin{equation*}
+    \mathbf{y} = \boldsymbol{\beta}_{3} + \boldsymbol{\Omega}_{3}\mathbf{a}[\boldsymbol{\beta}_{2} + \boldsymbol{\Omega}_{2}\mathbf{a}[\boldsymbol{\beta}_{1} + \boldsymbol{\Omega}_{1}\mathbf{a}[\boldsymbol{\beta}_{0} + \boldsymbol{\Omega}_{0}\mathbf{a}]]]
+\end{equation*}
+
+$\boldsymbol{\beta}_{2}$ has size $7 \times 1$ $(=D_{3})$, $\boldsymbol{\Omega}_{2}$ has size $7 \times 10$ $(=D_{3} \times D_{2})$.
+
+$\boldsymbol{\beta}_{1}$ has size $10 \times 1$ $(=D_{2})$, $\boldsymbol{\Omega}_{1}$ has size $10 \times 20$ $(=D_{2} \times D_{1})$.
+
+$\boldsymbol{\beta}_{0}$ has size $20 \times 1$ $(=D_{1})$, $\boldsymbol{\Omega}_{0}$ has size $20 \times 5$ $(=D_{1} \times D_{i})$.
+
+(\textit{Note: If the k\textsuperscript{th} layer has $D_{k}$ hidden units, then the bias vector $\boldsymbol{\beta}_{k-1}$ will be of size $D_{k}$.}
+
+\subsection{}
+
+\begin{mdframed}
+    Consider a deep neural network with $D_{i} = 5$ inputs, $D_{o} = 1$ output, and $K = 20$ hidden layers containing $D = 30$ hidden units each. What is the depth of this network? What is the width?
+\end{mdframed}
+
+The number of hidden units in each layer is referred to as the \textit{width} of the network, and the number of hidden layers as the \textit{depth}. The total number of hidden units is a measure of the network’s \textit{capacity}. Therefore, the depth of this neural network is $20$ and the width is $30$.
+
+\subsection{}
+\begin{mdframed}
+    Consider a network with $D_{i} = 1$ input, $D_{o} = 1$ output, and $K = 10$ layers, with $D = 10$ hidden units in each. Would the number of weights increase more if we increased the depth by one or the width by one? Provide your reasoning
+\end{mdframed}
+
+The total number of weights for a network with 1 input, 1 output, and 10 hidden layers with 10 hidden units in each layer is calculated as follows:
+
+\begin{itemize}
+    \item \textbf{Input to first hidden layer}: $1 \times 10 = 10$ weights
+    \item \textbf{Between hidden layers}: Each of the 9 connections between the successive layers has $10 \times 10 = 100$ weights, resulting in a total of $9 \times 100 = 900$ weights
+    \item \textbf{Last hidden layer to output}: $10 \times 1 = 10$
+\end{itemize}
+
+Resulting in a total of 920 weights. If the depth increased by one, then there would now be 10 connections between the hidden layers resulting in $10 \times 100 = 1000$ weights among the hidden layers, giving a total of $1020$ weights. If the width is increased by one, each of the 9 connections between the hidden layers has $11 \times 11 = 121$ weights, resulting in a total of $ 9 \times 121 = 1089$ weights in the hidden layers, or $1089 + 22 = 1111$ total weights. Therefore, increasing the width by one results in a larger total number of weights.
+
+\subsection{}
+\begin{mdframed}
+    Choose values for the parameters $\phi = \{\phi_{0}, \phi_{1}, \phi_{2}, \phi_{3}, \theta_{10}, \theta_{11}, \theta_{20}, \theta_{21}, \theta_{30}, \theta_{31},\}$ for the shallow neural network in equation 3.1 that will define an identity function over a finite range $x \in [a,b]$.
+
+    \begin{equation}
+        y = \phi_{0} + \phi_{1}\text{a}[\theta_{10} + \theta_{11}x] + \phi_{2}\text{a}[\theta_{20} + \theta_{21}x] + + \phi_{3}\text{a}[\theta_{30} + \theta_{31}x]
+        \tag{3.1}
+    \end{equation}
+\end{mdframed}
+
+To create an identity function over a finite range $x \in [a,b]$, the parameters must be chosen such that $y = x$. Therefore we can set $\phi_{0}, \phi_{2}$, and$ \phi_{3}$ to 0, and $\phi_{1} = 1$ such that:
+
+\begin{equation*}
+    y = \text{a}[\theta_{10} + \theta_{11}x]
+\end{equation*}
+
+And then set $\theta_{10} = 0$ and $\theta_{11} = 1$ such that $y=x$ as required.
+
+\subsection{}
+\begin{mdframed}
+    Figure 4.9 shows the activations in the three hidden units of a shallow network (as in figure 3.3). The slopes in the hidden units are 1.0, 1.0, and -1.0, respectively, and the “joints” in the hidden units are at positions 1/6, 2/6, and 4/6. Find values of $\phi_{0}, \phi_{1}, \phi_{2}$ and $\phi_{3}$ that will combine the hidden unit activations as $\phi_{0} + \phi_{1}h_{1} + \phi_{2}h_{2} + \phi_{3}h_{3}$ to create a function with four linear regions that oscillate between output values of zero and one. The slope of the leftmost region should be positive, the next one negative, and so on. How many linear regions will we create if we compose this network with itself? How many will we create if we compose it with itself K times?
+\end{mdframed}
+
+Points $x = 0, x = \frac{1}{6}, x = \frac{2}{6}$ and $x = \frac{4}{6}$ determine where the slope of the function changes. In region one, only hidden unit 3 is active. Therefore, since $h_{3}$ is only activated after $x = \frac{4}{6}$ and has a slope of -1, for the first section to start from $x=0$ and have a positive slope, $\phi_{0} = 4$ and $\phi_{3} = -6$. The second region has slope $\phi_{1} - \phi_{3}$ and requires a slope of $-6$ to bring the function down to zero at $x = \frac{2}{6}$, therefore $-6 = \phi_{1} + 6$ so $\phi_{1} = -12$. In the third region, the slope is $\phi_{1} +\phi_{2} - \phi_{3}$ which requires a slope of 3 to bring the function back to one at $x = \frac{4}{6}$. Therefore $3 = -12 + \phi_{2} + 6$ so $\phi_{2} = 9$.
+
+If the network is composed with itself, there will be $4 \times 4 = 16$ linear regions, as each of the four regions in the second network will be replicated four times. If the network is composed with itself K times, there will be $4^{K}$ regions.
+
+\subsection{}
+\begin{mdframed}
+    Following from problem 4.8,  is it possible to create a function with three linear regions that oscillates back and forth between output values of zero and one using a shallow network with two hidden units? Is it possible to create a function with five linear regions that oscillates in the same way using a shallow network with four hidden units?
+\end{mdframed}
+
+
+It is not possible to create a function with three linear regions that oscillates back and forth between output values of zero and one using a shallow network with two hidden units. This is because two hidden units introduce two breakpoints only, which results in three linear regions although oscillation between zero and one is not possible.
+
+However, it is possible to create a function with five linear regions that oscillates in the same way using a shallow network with four hidden units, and generally, for $N \geq 3$ hidden units it’s possible to make a function that oscillates back and forth N + 1 times.
+
+\subsection{}
+\begin{mdframed}
+    Consider a deep neural network with a single input, a single output, and K hidden layers, each of which contains D hidden units. Show that this network will have a total of $3D + 1 + (K-1)D(D+1)$ parameters.
+\end{mdframed}
+
+For a deep neural network with $D$ hidden units, each hidden unit has the form:
+
+\begin{equation*}
+    D_{n} = \text{a}[\theta_{0n} + \theta_{1n}x]
+\end{equation*}
+
+Meaning that within the hidden layers, where there are $K-1$ connections, and each hidden unit is connected to every hidden unit in the previous layer, resulting in $D^{2}$ weights and an additional $D$ biases, or $(K-1)D^{2} + (K-1)D$ weights and biases across the hidden layers. This simplifies to $(K-1)D(D+1)$ parameters.
+
+Additionally, each of the $D$ units in the first layer receives 2 parameters from the single input, adding $2D$ parameters. Finally, the output receives $D$ weights from the final layer plus a bias term, $D+1$.
+
+In total this gives $2D + (K-1)D(D+1) + D + 1 = 3D + 1 + (K-1)D(D+1)$ parameters.
+
+\subsection{}
+\begin{mdframed}
+    Consider two neural networks that map a scalar input $x$ to a scalar output $y$. The first network is shallow and has $D = 95$ hidden units. The second is deep and has $K=10$ layers, each containing $D=5$ hidden units. How many parameters does each network have? How many linear regions can each network make? Which would run faster?
+\end{mdframed}
+
+The shallow network has $D + D + D + 1$ (input, hidden layer, output) parameters, or $3D + 1$ total parameters. Therefore with $D=95$ there are $286$ parameters. This network is capable of creating $D+1$ or 96 linear regions.
+
+For the deep network, as shown above, there are $3D + 1 + (K-1)D(D+1)$ total parameters. For $K=10$ and $D=5$ this yields a total of $286$ parameters. This network is capable of creating $(D+1)^{K}$ linear regions, or $(5+1)^{10} = 60,466,176$ linear regions.
+
+In principle, the shallow network will be faster to run on modern hardware as the computation is more parallel.
+
+
+
+
+
+
+
+\begin{equation*}
+    \mathbb{F}\mathbbm{reya}
+\end{equation*}
+\end{document}

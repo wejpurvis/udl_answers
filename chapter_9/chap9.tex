@@ -1,0 +1,239 @@
+\documentclass[12pt]{report}
+
+% Packages
+\usepackage{acronym}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{epigraph}
+\usepackage{geometry}
+\usepackage{graphicx}
+%\usepackage{mdframed}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{transparent}
+\usepackage[hidelinks, colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage[backend=biber, style=ieee]{biblatex}
+%\addbibresource{cdt_app.bib}
+
+% Acronym set-up
+% Command to insert acronyms with a temporary color change
+\newcommand{\myAcro}[1]{{\hypersetup{linkcolor=black}\acl{#1}}} % For acronym list (full form)
+\newcommand{\myAcroLink}[1]{{\hypersetup{linkcolor=black}\acs{#1}}}
+
+% Document geometry setup
+\geometry{
+    a4paper,
+    margin=2cm,
+    top=1cm,    % Adjust top margin
+    bottom=1cm,  % Adjust bottom margin
+    headheight=14.5pt,
+    includeheadfoot
+}
+
+\pagestyle{fancy} % Use fancy style for all pages
+\fancyhf{} % Clear all header and footer fields
+
+% Header
+\fancyhead[L]{{\transparent{0.5}Chapter \udlchap{} Questions}} % Left header
+\fancyhead[R]{{\transparent{0.5}wp289}} % Right header
+
+% Footer
+\fancyfoot[L]{\transparent{0.5}Understanding Deep Learning} % Left footer
+\fancyfoot[R]{\transparent{0.5}\thepage} % Right footer
+
+% Define line thickness
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Redefining plain page style if needed
+\fancypagestyle{plain}{ % Applies to chapter beginnings and similar
+  \fancyhf{} % clear all header and footer fields for plain style
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancyhead[L]{{\transparent{0.5}Chapter \udlchap{}Questions}}
+  \fancyhead[R]{{\transparent{0.5}wp289}}
+  \fancyfoot[L]{\transparent{0.5}Understanding Deep Learning}
+  \fancyfoot[R]{\transparent{0.5}\thepage}
+}
+
+% Customise Chapter Headings
+\titleformat{\chapter}
+    {\normalfont\LARGE\bfseries}
+    {\thechapter.}
+    {1em}
+    {}
+\titlespacing*{\chapter}{0pt}{-20pt}{\baselineskip}
+
+% Customise section spacing
+\titlespacing*{\section}{0pt}{\baselineskip}{0.5\baselineskip}
+
+% Adjusting space around figures
+\setlength{\floatsep}{5pt}
+\setlength{\textfloatsep}{5pt}
+
+% Adjusting caption spacing
+\captionsetup{aboveskip=5pt, belowskip=5pt}
+
+% Format paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}  % Adjust the value as needed
+
+% Adjust list spacing
+%\setlist[enumerate]{before=\vspace{0.5em}, after=\vspace{0.5em}}
+\setlist[enumerate]{before=\vspace{-0.5\baselineskip}, after=\vspace{-0.5\baselineskip}}
+
+% Customise question boxes
+\usepackage[framemethod=TikZ]{mdframed}
+\mdfsetup{
+    backgroundcolor=gray!20,
+    innertopmargin=10pt,
+    innerbottommargin=10pt,
+    skipbelow=0pt 
+}
+
+\def\udlchap{9}
+\renewcommand{\thesubsection}{Problem \udlchap.\arabic{subsection}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\section*{Chapter 9: Regularisation}
+
+\subsection{}
+\begin{mdframed}
+    Consider a model where the prior distribution over the parameters is a normal distribution with mean zero and variance $\sigma_{\phi}^{2}$ so that:
+
+    \begin{equation*}
+        Pr(\phi) = \prod_{j=1}^{J}\text{Norm}_{\phi_{j}}[0, \sigma_{\phi}^{2}]
+    \end{equation*}
+
+    where $j$ indexes the model parameters. We now maximise $\prod_{i=1}^{I}Pr(\mathbf{y}_{i}|\mathbf{x}_{i}, \boldsymbol{\phi})Pr(\boldsymbol{\phi})$. Show that the associated loss function of this model is equivalent to L2 regularisation.
+\end{mdframed}
+
+The probability density function of a normal distribution $\text{Norm}_{\phi_{j}}[0, \sigma_{\phi}^{2}]$ is given by:
+
+\begin{equation*}
+    Pr(\phi_{j}) = \frac{1}{\sqrt{2\pi\sigma_{\phi}^{2}}}\text{exp}\left(-\frac{\phi_{j}^{2}}{2\sigma_{\phi}^{2}}\right)
+\end{equation*}
+
+Therefore, the joint prior over all parameters $\phi$ is:
+
+\begin{align*}
+    Pr(\phi) & = \prod_{j=1}^{J}\frac{1}{\sqrt{2\pi\sigma_{\phi}^{2}}}\text{exp}\left(-\frac{\phi_{j}^{2}}{2\sigma_{\phi}^{2}}\right)                 \\
+             & = \left(\frac{1}{\sqrt{2\pi\sigma_{\phi}^{2}}}\right)^{J}\text{exp}\left(-\sum_{j=1}^{J}\frac{\phi_{j}^{2}}{2\sigma_{\phi}^{2}}\right)
+\end{align*}
+
+Taking the logarithm of the joint prior, we have:
+
+\begin{align*}
+    \text{log}Pr(\phi) & = -\frac{J}{2}\text{log}(2\pi\sigma_{\phi}^{2}) - \sum_{j=1}^{J}\frac{\phi_{j}^{2}}{2\sigma_{\phi}^{2}}  \\
+                       & = -\frac{J}{2}\text{log}(2\pi\sigma_{\phi}^{2}) - \frac{1}{2\sigma_{\phi}^{2}}\sum_{j=1}^{J}\phi_{j}^{2}
+\end{align*}
+
+Maximising the joint prior is equivalent to minimising the negative of the joint prior. Therefore, the loss function is:
+
+\begin{equation*}
+    L[\phi] = \frac{J}{2}\text{log}(2\pi\sigma_{\phi}^{2}) + \frac{1}{2\sigma_{\phi}^{2}}\sum_{j=1}^{J}\phi_{j}^{2}
+\end{equation*}
+
+Where the penalty term is $\frac{1}{2\sigma_{\phi}^{2}}\sum_{j=1}^{J}\phi_{j}^{2}$, which is equivalent to L2 regularisation. ($\lambda = \frac{1}{2\sigma_{\phi}^{2}}$)
+
+\subsection{}
+\begin{mdframed}
+    How do the gradients of the loss function change when L2 regularisation (equation 9.5) is added?
+\end{mdframed}
+
+The loss function with L2 regularisation is given by:
+
+\begin{equation*}
+    \tilde{L}[\phi] = L[\phi] + \frac{\lambda}{2}\sum_{k}\phi_{k}^{2}
+\end{equation*}
+
+Meaning that the gradient update rule now becomes:
+
+\begin{equation*}
+    \phi \leftarrow \phi - \alpha \left(\frac{\partial L}{\partial \phi} + \lambda \phi\right)
+\end{equation*}
+
+where $\alpha$ is the learning rate, and $\lambda$ is the regularisation parameter. Using L2 regularisation therefore encourages the learning algorithm to prefer smaller parameter values, reducing overfitting and improving model generalization.
+
+\subsection{}
+\begin{mdframed}
+    Consider a linear regression model $y= \phi_{0} + \phi_{1}x$ with input $x$, output $y$, and parameters $\phi_{0}$ and $\phi_{1}$. Assume we have $I$ training examples $\{x_{i}, y_{i}\}$ and use a least squares loss. Consider adding Gaussian noise with mean zero and variance $\sigma_{x}^{2}$ to the inputs $x_{i}$ at each training iteration. What is the expected gradient update?
+\end{mdframed}
+
+Adding Gaussian noise to the inputs $x_{i}$ at each training iteration means that the loss function becomes:
+
+\begin{align*}
+    \tilde{L} & = \sum_{i=1}^{I}(\phi_{0} + \phi_{1}(x_{i} + \epsilon_{i}) - y_{i})^{2}                                                                                            \\
+              & = \sum_{i=1}^{I}(\phi_{0} + \phi_{1}x_{i} - y_{i} + \phi_{1}\epsilon_{i} )^{2}                                                                                     \\
+              & = \sum_{i=1}^{I}(\phi_{0} + \phi_{1}x_{i} - y_{i})^{2} + \phi_{1}^{2}\sum_{i=1}^{I}\epsilon_{i}^{2} + \sum_{i=1}^{I}(\phi_{0} + \phi_{1}x_{i} - y_{i})\epsilon_{i}
+\end{align*}
+
+Taking expectations, and noting that $\mathbb{E}[\epsilon_{i}] = 0$ and $\mathbb{E}[\epsilon_{i}^{2}] = \sigma_{x}^{2}$, the expected gradient update is:
+
+\begin{align*}
+    \mathbb{E}[\tilde{L}] & = \sum_{i=1}^{I}(\phi_{0} + \phi_{1}x_{i} - y_{i})^{2}  + \phi_{1}^{2}\sum_{i=1}^{I}\sigma_{x}^{2} \\
+                          & = L + (I\sigma_{x}^{2})\phi_{1}^{2}
+\end{align*}
+
+which is equivalent to applying L2 regularisation with constant $\lambda = I\sigma_{x}^{2}$.
+
+\subsection{}
+\begin{mdframed}
+    Derive the loss function for multiclass classification when we use label smoothing so that the target probability distribution has $0.9$ at the correct class and the remaining probability mass of $0.1$ is divided between the remaining $D_{o} - 1$ classes.
+\end{mdframed}
+
+The probability of the data is now:
+
+\begin{equation*}
+    Pr(\mathbf{y}_{i}|\mathbf{x}_{i}, \boldsymbol{\phi}) = 0.9 \cdot \text{softmax}_{y_{i}}[\mathbf{f}(\mathbf{x}_{i}, \boldsymbol{\phi})] + \sum_{z \in \{1 \dots D_{o}\} \backslash y_{i}}^{max}\frac{0.1}{D_{o} - 1}\cdot \text{softmax}_{z}[\mathbf{f}(\mathbf{x}_{i}, \boldsymbol{\phi})]
+\end{equation*}
+
+and the loss function is the negative log probability of this quantity.
+
+\subsection{}
+\begin{mdframed}
+    Show that the weight decay parameter update with decay rate $\lambda$:
+
+    \begin{equation*}
+        \phi \leftarrow (1-\lambda)\phi - \alpha \frac{\partial L}{\partial \phi}
+    \end{equation*}
+
+    on the original loss function $L[\phi]$ is equivalent to a standard gradient update using L2 regularisation so that the modified loss function $\tilde{L}[\phi]$ is:
+
+    \begin{equation*}
+        \tilde{L}[\phi] = L[\phi] + \frac{\lambda}{2\alpha}\sum_{k}\phi_{k}^{2}
+    \end{equation*}
+
+    where $\phi$ are the parameters, and $\alpha$ is the learning rate.
+\end{mdframed}
+
+To perform gradient descent on the modified loss function $\tilde{L}[\phi]$, we need to compute the gradient of $\tilde{L}[\phi]$ with respect to $\phi$:
+
+\begin{equation*}
+    \frac{\partial \tilde{L}}{\partial \phi} = \frac{\partial L}{\partial \phi} + \frac{\lambda}{2\alpha}\cdot 2\phi = \frac{\partial L}{\partial \phi} + \frac{\lambda}{\alpha}\phi
+\end{equation*}
+
+Therefore, the gradient update rule becomes:
+
+\begin{align*}
+    \phi & \leftarrow \phi - \alpha\left(\frac{\partial L}{\partial \phi} + \frac{\lambda}{\alpha}\phi\right) \\
+         & \leftarrow \phi - \alpha\frac{\partial L}{\partial \phi} - \lambda\phi                             \\
+         & \leftarrow (1-\lambda)\phi - \alpha\frac{\partial L}{\partial \phi}
+\end{align*}
+
+\subsection{}
+\begin{mdframed}
+    Consider a model with parameters $\boldsymbol{\phi} = [\boldsymbol{\phi}_{0}, \boldsymbol{\phi}_{1}]^{T}$. Draw the $L0$, $L\frac{1}{2}$, and $L1$ regularisation terms in a similar form to figure 9.1b. The $LP$ regularisation term is $\sum_{d=1}^{D}|\phi_{d}|^{P}$.
+\end{mdframed}
+\end{document}

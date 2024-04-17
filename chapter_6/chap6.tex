@@ -1,0 +1,353 @@
+\documentclass[12pt]{report}
+
+% Packages
+\usepackage{acronym}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{epigraph}
+\usepackage{geometry}
+\usepackage{graphicx}
+%\usepackage{mdframed}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{transparent}
+\usepackage[hidelinks, colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage[backend=biber, style=ieee]{biblatex}
+%\addbibresource{cdt_app.bib}
+
+% Acronym set-up
+% Command to insert acronyms with a temporary color change
+\newcommand{\myAcro}[1]{{\hypersetup{linkcolor=black}\acl{#1}}} % For acronym list (full form)
+\newcommand{\myAcroLink}[1]{{\hypersetup{linkcolor=black}\acs{#1}}}
+
+% Document geometry setup
+\geometry{
+    a4paper,
+    margin=2cm,
+    top=1cm,    % Adjust top margin
+    bottom=1cm,  % Adjust bottom margin
+    headheight=14.5pt,
+    includeheadfoot
+}
+
+\pagestyle{fancy} % Use fancy style for all pages
+\fancyhf{} % Clear all header and footer fields
+
+% Header
+\fancyhead[L]{{\transparent{0.5}Chapter \udlchap{} Questions}} % Left header
+\fancyhead[R]{{\transparent{0.5}wp289}} % Right header
+
+% Footer
+\fancyfoot[L]{\transparent{0.5}Understanding Deep Learning} % Left footer
+\fancyfoot[R]{\transparent{0.5}\thepage} % Right footer
+
+% Define line thickness
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Redefining plain page style if needed
+\fancypagestyle{plain}{ % Applies to chapter beginnings and similar
+  \fancyhf{} % clear all header and footer fields for plain style
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancyhead[L]{{\transparent{0.5}Chapter \udlchap{}Questions}}
+  \fancyhead[R]{{\transparent{0.5}wp289}}
+  \fancyfoot[L]{\transparent{0.5}Understanding Deep Learning}
+  \fancyfoot[R]{\transparent{0.5}\thepage}
+}
+
+% Customise Chapter Headings
+\titleformat{\chapter}
+    {\normalfont\LARGE\bfseries}
+    {\thechapter.}
+    {1em}
+    {}
+\titlespacing*{\chapter}{0pt}{-20pt}{\baselineskip}
+
+% Customise section spacing
+\titlespacing*{\section}{0pt}{\baselineskip}{0.5\baselineskip}
+
+% Adjusting space around figures
+\setlength{\floatsep}{5pt}
+\setlength{\textfloatsep}{5pt}
+
+% Adjusting caption spacing
+\captionsetup{aboveskip=5pt, belowskip=5pt}
+
+% Format paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}  % Adjust the value as needed
+
+% Adjust list spacing
+%\setlist[enumerate]{before=\vspace{0.5em}, after=\vspace{0.5em}}
+\setlist[enumerate]{before=\vspace{-0.5\baselineskip}, after=\vspace{-0.5\baselineskip}}
+
+% Customise question boxes
+\usepackage[framemethod=TikZ]{mdframed}
+\mdfsetup{
+    backgroundcolor=gray!20,
+    innertopmargin=10pt,
+    innerbottommargin=10pt,
+    skipbelow=0pt 
+}
+
+\def\udlchap{6}
+\renewcommand{\thesubsection}{Problem \udlchap.\arabic{subsection}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\section*{Chapter 6: Fitting models}
+
+\subsection{}
+\begin{mdframed}
+    Show that the derivatives of the least squares loss function in equation 6.5 are given by the expressions in equation 6.7
+\end{mdframed}
+
+\begin{equation}
+    L = \sum_{i=1}^{I} (\phi_{0} + \phi_{1}x_{i} - y+{i})^2
+    \tag{6.5}
+    \label{eq:6.5}
+\end{equation}
+
+Taking the derivative of Equation~\ref{eq:6.5} with respect to $\phi_{0}$, we get:
+
+\begin{equation*}
+    \frac{\partial L}{\partial \phi_{0}} =2(\phi_{0} + \phi_{1}x_{i} - y_{i})
+\end{equation*}
+
+and taking the derivative with respect to $\phi_{1}$, we get:
+
+\begin{equation*}
+    \frac{\partial L}{\partial \phi_{1}} = 2x_{i}(\phi_{0} + \phi_{1}x_{i} - y_{i})
+\end{equation*}
+
+Which is the same as shown in equation 6.7.
+
+\subsection{}
+\begin{mdframed}
+    A surface is convex is the eigenvalues of the Hessian $\mathbf{H[\phi]}$ are positive everywhere. In this case, the surface has a unique minimum, and optimisation is easy. Find an algebraic expression for the Hessian matrix,
+
+    \begin{equation*}
+        \mathbf{H}[\phi] = \left[\begin{matrix}
+                \frac{\partial^2 L}{\partial \phi^2}               & \frac{\partial^2 L}{\partial \phi \partial \theta} \\
+                \frac{\partial^2 L}{\partial \theta \partial \phi} & \frac{\partial^2 L}{\partial \theta^2}
+            \end{matrix}\right]
+    \end{equation*}
+
+    for the linear regression model (Equation~\ref{eq:6.5}). Prove that this function is convex by showing that the eigenvalues are always positive. This can be done by showing that both the trace and the determinant of the matrix are positive.
+\end{mdframed}
+
+Start by computing each term in the Hessian matrix where $\phi = \phi_{0}$ and $\theta = \phi_{1}$:
+
+\begin{equation*}
+    \frac{\partial^2 L}{\partial \phi^2} = 2\sum_{i=1}^{I} 1 = 2I
+\end{equation*}
+
+\begin{equation*}
+    \frac{\partial^2 L}{\partial \phi \partial \theta} = 2\sum_{i=1}^{I}x_{i}
+\end{equation*}
+
+\begin{equation*}
+    \frac{\partial^2 L}{\partial \theta \partial \phi} = 2\sum_{i=1}^{I}x_{i}
+\end{equation*}
+
+\begin{equation*}
+    \frac{\partial^2 L}{\partial \theta^2} = 2\sum_{i=1}^{I}x_{i}^2
+\end{equation*}
+
+Therefore, the Hessian matrix is:
+
+\begin{equation*}
+    \mathbf{H}[\phi] = \left[\begin{matrix}
+            2I                   & 2\sum_{i=1}^{I}x_{i}   \\
+            2\sum_{i=1}^{I}x_{i} & 2\sum_{i=1}^{I}x_{i}^2
+        \end{matrix}\right]
+\end{equation*}
+
+The trace of this Hessian matrix is:
+
+\begin{equation*}
+    \text{Tr}(\mathbf{H}[\phi]) = 2I + 2\sum_{i=1}^{I}x_{i}^2
+\end{equation*}
+
+The determinant of the Hessian matrix is:
+
+\begin{equation*}
+    \text{Det}(\mathbf{H}[\phi]) = 4I\sum_{i=1}^{I}x_{i}^2 - 4\left(\sum_{i=1}^{I}x_{i}\right)^2
+\end{equation*}
+
+Which are both positive due to the squared terms. Therefore, the Hessian matrix is positive definite, and the function is convex.
+
+\subsection{}
+\begin{mdframed}
+    Compute the derivates of the least squares loss $L[\phi]$ with respect to the parameters $\phi_{0}$ and $\phi_{1}$ for the Gabor model (Equation~\ref{eq:6.8}),
+
+    \begin{equation}
+        \text{f}[x, \boldsymbol{\phi}] = \text{sin}[\phi_{0} + 0.06\cdot\phi_{1}x]\cdot\text{exp}\left(-\frac{(\phi_{0} + 0.06\cdot\phi_{1}x)^{2}}{32.0}\right)
+        \tag{6.8}
+        \label{eq:6.8}
+    \end{equation}
+\end{mdframed}
+
+The least squares loss function for $I$ training examples is defined as:
+
+\begin{equation*}
+    L = \sum_{i=1}^{I} (\text{sin}[\phi_{0} + 0.06\cdot\phi_{1}x_{i}]\cdot\text{exp}\left(-\frac{(\phi_{0} + 0.06\cdot\phi_{1}x_{i})^{2}}{32.0}\right) - y_{i})^2
+\end{equation*}
+
+Taking the derivative of $L$ with respect to $\phi_{0}$, we get:
+
+\begin{align*}
+    \frac{\partial L}{\partial \phi_{0}} = & \, 2\sum_{i=1}^{I} \left(\sin[\phi_{0} + 0.06\cdot\phi_{1}x_{i}]\cdot\exp\left(-\frac{(\phi_{0} + 0.06\cdot\phi_{1}x_{i})^{2}}{32.0}\right) - y_{i}\right)                            \\
+                                           & \times \Bigg(\cos[\phi_{0} + 0.06\cdot\phi_{1}x_{i}]\cdot\exp\left(-\frac{(\phi_{0} + 0.06\cdot\phi_{1}x_{i})^{2}}{32.0}\right)                                                       \\
+                                           & \quad - \frac{(\phi_{0} + 0.06\cdot\phi_{1}x_{i})}{16.0}\cdot\sin[\phi_{0} + 0.06\cdot\phi_{1}x_{i}]\cdot\exp\left(-\frac{(\phi_{0} + 0.06\cdot\phi_{1}x_{i})^{2}}{32.0}\right)\Bigg)
+\end{align*}
+
+Taking the derivative of $L$ with respect to $\phi_{1}$, we get:
+
+\begin{align*}
+    \frac{\partial L}{\partial \phi_{1}} = & \, 2\sum_{i=1}^{I} x_{i} \left(\sin[\phi_{0} + 0.06\cdot\phi_{1}x_{i}]\cdot\exp\left(-\frac{(\phi_{0} + 0.06\cdot\phi_{1}x_{i})^{2}}{32.0}\right) - y_{i}\right)                                     \\
+                                           & \times \Bigg(\cos[\phi_{0} + 0.06\cdot\phi_{1}x_{i}]\cdot\exp\left(-\frac{(\phi_{0} + 0.06\cdot\phi_{1}x_{i})^{2}}{32.0}\right)                                                                      \\
+                                           & \quad - \frac{0.06\cdot x_{i}(\phi_{0} + 0.06\cdot\phi_{1}x_{i})}{16.0}\cdot\sin[\phi_{0} + 0.06\cdot\phi_{1}x_{i}]\cdot\exp\left(-\frac{(\phi_{0} + 0.06\cdot\phi_{1}x_{i})^{2}}{32.0}\right)\Bigg)
+\end{align*}
+
+\subsection{}
+\begin{mdframed}
+    The logistic regression model uses a linear function to assign an input $\mathbf{x}$ to one of two classes $y \in \{0,1\}$. For a 1D input and a 1D output, it has two parameters $\phi_{0}$ and $\phi_{1}$, and the model is given by:
+
+    \begin{equation*}
+        Pr(y=1|x) = \text{sig}[\phi_{0} + \phi_{1}x],
+    \end{equation*}
+    where $\text{sig}[\bullet]$ is the logistic sigmoid function:
+    \begin{equation*}
+        \text{sig}[z] = \frac{1}{1 + \exp(-z)}.
+    \end{equation*}
+
+    Plot $y$ against $x$ for this model for different values of $\phi_{0}$ and $\phi_{1}$ and explain the qualitative meaning of each parameter. What is a suitable loss function for this model? Compute the derivatives of this loss function with respect to the parameters. Generate ten data points from a normal distribution with mean $-1$ and standard deviation $1$ and assign them the label $y=0$. Generate another ten data points from a normal distribution with mean $1$ ad standard deviation $1$ and assign these the label $y=1$. Plot the loss as a heatmap in terms of the two parameters $\phi_{0}$ and $\phi_{1}$. Is this loss function convex? How could you prove this?
+\end{mdframed}
+
+Answer given
+
+\subsection{}
+\begin{mdframed}
+    Compute the derivates of the least squares loss with respect to the ten parameters of the simple neural network introduced in Equation~\ref{eq:3.1}:
+
+    \begin{equation*}
+        \text{f}[x,\phi] = \phi_{0} + \phi_{1}\text{a}[\theta_{10} + \theta_{11}x] + \phi_{2}\text{a}[\theta_{20} + \theta_{21}x] + \phi_{3}\text{a}[\theta_{30} + \theta_{31}x]
+        \tag{3.1}
+        \label{eq:3.1}
+    \end{equation*}
+
+    Think carefully about what the derivative of the ReLU function $\text{a}[\bullet]$ will be.
+\end{mdframed}
+
+The derivate of the least squares loss for the function $\text{f}[x, \phi]$ is given by:
+
+\begin{equation*}
+    \frac{\partial L}{\partial \phi_{j}} = -2 \sum_{i}(y - \text{f}[x_{i}, \phi])\frac{\partial \text{f}[x_{i}, \phi]}{\partial \phi_{j}}
+\end{equation*}
+
+The derivate of the ReLU is zero if the input $z$ is less than zero and one if the input $z$ is greater than zero, which we can write as $\mathbb{I}[z > 0]$. The derivate terms can therefore be written as:
+
+\begin{align*}
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \phi_{0}}    & = 1                                                                         \\
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \phi_{1}}    & = \text{a}[\theta_{10} + \theta_{11}x_{i}]                                  \\
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \phi_{2}}    & = \text{a}[\theta_{20} + \theta_{21}x_{i}]                                  \\
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \phi_{3}}    & = \text{a}[\theta_{30} + \theta_{31}x_{i}]                                  \\
+    %%%
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \theta_{10}} & = \phi_{1} \cdot \mathbb{I}[\theta_{10} + \theta_{11}x_{i} > 0]             \\
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \theta_{11}} & = \phi_{1} \cdot x_{i} \cdot \mathbb{I}[\theta_{10} + \theta_{11}x_{i} > 0] \\
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \theta_{20}} & = \phi_{2} \cdot \mathbb{I}[\theta_{20} + \theta_{21}x_{i} > 0]             \\
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \theta_{21}} & = \phi_{2} \cdot x_{i} \cdot \mathbb{I}[\theta_{20} + \theta_{21}x_{i} > 0] \\
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \theta_{30}} & = \phi_{3} \cdot \mathbb{I}[\theta_{30} + \theta_{31}x_{i} > 0]             \\
+    \frac{\partial \text{f}[x_{i}, \phi]}{\partial \theta_{31}} & = \phi_{3} \cdot x_{i} \cdot \mathbb{I}[\theta_{30} + \theta_{31}x_{i} > 0]
+\end{align*}
+
+\subsection{}
+\begin{mdframed}
+    Which of the functions in figure 6.11 is convex? Justify your answer. Characterize each of the points 1-7 as a local minimum, global minimum, or neither.
+\end{mdframed}
+
+Only curve b is convex. Points 1, and 3 are local minima. Points 2, 5, 6 and global minima, and points 3, 4, and 7 are neither.
+
+\subsection{}
+
+\begin{mdframed}
+    The gradient descent trajectory for path 1 in figure 6.5a oscillates back and forth ineﬀiciently as it moves down the valley toward the minimum. It’s also notable that it turns at right angles to the previous direction at each step. Provide a qualitative explanation for these phenomena. Propose a solution that might help prevent this behavior
+\end{mdframed}
+
+The gradient descent trajectory for path 1 in figure 6.5a shows gradient descent with line search. The gradient at each step points directly downhill with respect to the contour lines and if the slope was still moving downhill at all in the current direction, then we should continue moving forward in the previous stage. This results in the direction turning at right angles.
+
+The oscillation happens because the trajectory slightly overshoots the center of a descending valley. It has to turn at right angles and then overshoots again in the other direction and so on. This can be prevented by using a smaller learning rate or incorporating momentum into the optimization algorithm.
+
+\subsection{}
+\begin{mdframed}
+    Can (non-stochastic) gradient descent with a \textit{fixed} learning rate escape local minima?
+\end{mdframed}
+
+Yes: the distance moved depends on the gradient at the current point in the learning rate. The movement is agnostic to whether it crosses from valley to valley. In practice, the learning rate is very small, so this is unlikely to happen.
+
+
+\subsection{}
+\begin{mdframed}
+    We run the stochastic gradient descent algorithm for 1,000 iterations on a dataset
+    of size 100 with a batch size of 20. How many epochs are we running the algorithm for?
+\end{mdframed}
+
+We are running the algorithm for 5 epochs. An epoch is defined as one pass through the entire dataset. (1000 iterations / 100 samples) = 10 iterations per sample. Since the batch size is 20, we need (100 / 20) 5 iterations to pass through the entire dataset.
+
+\subsection{}
+\begin{mdframed}
+    Show that the momentum term $\mathbf{m}_{t}$ (Equation~\ref{eq:6.11}) is an infinite weighted sum of the gradients at the previous iterations and derive an expression for the coefficients (weights) of that sum.
+
+    \begin{equation}
+        \mathbf{m}_{t+1} \leftarrow \beta\cdot\mathbf{m}_{t} + (1 - \beta)\cdot\sum_{i \in \text{batch}}\frac{\partial l_{i}[\boldsymbol{\phi}_{t}]}{\partial \boldsymbol{\phi}}
+        \tag{6.11}
+        \label{eq:6.11}
+    \end{equation}
+\end{mdframed}
+
+Equation~\ref{eq:6.11} can be rewritten as:
+
+\begin{equation*}
+    \mathbf{m}_{t+1} = \beta\cdot\mathbf{m}_{t} + (1 - \beta)\cdot\nabla l_{t}
+\end{equation*}
+
+Substituting $\mathbf{m}_{t}$ from the previous step, we get:
+
+\begin{equation*}
+    \mathbf{m}_{t+1} = \beta(\beta\cdot\mathbf{m}_{t-1} + (1 - \beta)\cdot\nabla l_{t-1}) + (1 - \beta)\cdot\nabla l_{t}
+\end{equation*}
+
+Continuing this process recursively, we can express $\mathbf{m}_{t+1}$ as an infinite series of the past gradients, each multiplied by a coefficient that diminishes exponentially:
+
+\begin{equation*}
+    \mathbf{m}_{t+1} = (1-\beta)\cdot\nabla l_{t} + \beta(1-\beta)\cdot\nabla l_{t-1} + \beta^2(1-\beta)\cdot\nabla l_{t-2} + \ldots
+\end{equation*}
+
+This can be generalised as:
+
+\begin{equation*}
+    \mathbf{m}_{t+1} = (1-\beta)\sum_{i=0}^{t} \beta^{i}\cdot\nabla l_{t-i}
+\end{equation*}
+
+Where the coefficient for each gradient $\nabla l_{t-i}$ is $(1-\beta)\beta^{i}$, indicating that each subsequent gradient contributes less to the momentum term. This weighting creates an "exponential moving average" of the gradients, where more recent gradients have a higher influence on the momentum term than older ones.
+
+\subsection{}
+\begin{mdframed}
+    What dimensions will the Hessian have if the model has one million parameters?
+\end{mdframed}
+
+The Hessian matrix will have dimensions $10^6 \times 10^6$.
+
+\end{document}

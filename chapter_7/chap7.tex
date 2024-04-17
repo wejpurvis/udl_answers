@@ -1,0 +1,528 @@
+\documentclass[12pt]{report}
+
+% Packages
+\usepackage{acronym}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{epigraph}
+\usepackage{geometry}
+\usepackage{graphicx}
+%\usepackage{mdframed}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{transparent}
+\usepackage[hidelinks, colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage[backend=biber, style=ieee]{biblatex}
+%\addbibresource{cdt_app.bib}
+
+% Acronym set-up
+% Command to insert acronyms with a temporary color change
+\newcommand{\myAcro}[1]{{\hypersetup{linkcolor=black}\acl{#1}}} % For acronym list (full form)
+\newcommand{\myAcroLink}[1]{{\hypersetup{linkcolor=black}\acs{#1}}}
+
+% Document geometry setup
+\geometry{
+    a4paper,
+    margin=2cm,
+    top=1cm,    % Adjust top margin
+    bottom=1cm,  % Adjust bottom margin
+    headheight=14.5pt,
+    includeheadfoot
+}
+
+\pagestyle{fancy} % Use fancy style for all pages
+\fancyhf{} % Clear all header and footer fields
+
+% Header
+\fancyhead[L]{{\transparent{0.5}Chapter \udlchap{} Questions}} % Left header
+\fancyhead[R]{{\transparent{0.5}wp289}} % Right header
+
+% Footer
+\fancyfoot[L]{\transparent{0.5}Understanding Deep Learning} % Left footer
+\fancyfoot[R]{\transparent{0.5}\thepage} % Right footer
+
+% Define line thickness
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Redefining plain page style if needed
+\fancypagestyle{plain}{ % Applies to chapter beginnings and similar
+  \fancyhf{} % clear all header and footer fields for plain style
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancyhead[L]{{\transparent{0.5}Chapter \udlchap{}Questions}}
+  \fancyhead[R]{{\transparent{0.5}wp289}}
+  \fancyfoot[L]{\transparent{0.5}Understanding Deep Learning}
+  \fancyfoot[R]{\transparent{0.5}\thepage}
+}
+
+% Customise Chapter Headings
+\titleformat{\chapter}
+    {\normalfont\LARGE\bfseries}
+    {\thechapter.}
+    {1em}
+    {}
+\titlespacing*{\chapter}{0pt}{-20pt}{\baselineskip}
+
+% Customise section spacing
+\titlespacing*{\section}{0pt}{\baselineskip}{0.5\baselineskip}
+
+% Adjusting space around figures
+\setlength{\floatsep}{5pt}
+\setlength{\textfloatsep}{5pt}
+
+% Adjusting caption spacing
+\captionsetup{aboveskip=5pt, belowskip=5pt}
+
+% Format paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}  % Adjust the value as needed
+
+% Adjust list spacing
+%\setlist[enumerate]{before=\vspace{0.5em}, after=\vspace{0.5em}}
+\setlist[enumerate]{before=\vspace{-0.5\baselineskip}, after=\vspace{-0.5\baselineskip}}
+
+% Customise question boxes
+\usepackage[framemethod=TikZ]{mdframed}
+\mdfsetup{
+    backgroundcolor=gray!20,
+    innertopmargin=10pt,
+    innerbottommargin=10pt,
+    skipbelow=0pt 
+}
+
+\def\udlchap{7}
+\renewcommand{\thesubsection}{Problem \udlchap.\arabic{subsection}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\section*{Chapter 7: Gradients and initialisation}
+
+\subsection{}
+\begin{mdframed}
+    A two-layer network with two hidden units in each layer can be defined as:
+
+    \begin{align*}
+        y = \  & \phi_{0} + \phi_{1}\text{a}[\psi_{01} + \psi_{11}\text{a}[\theta_{01} + \theta_{11}x]+ \psi_{21}\text{a}[\theta_{02} + \theta_{12}x]] \\
+               & + \phi_{2}\text{a}[\psi_{02} + \psi_{12}\text{a}[\theta_{01} + \theta_{11}x]
+            + \psi_{22}\text{a}[\theta_{02} + \theta_{12}x]]
+    \end{align*}
+
+    where the functions $a[\bullet]$ are ReLU functions. Compute the derivatives of the output $y$ with respect to each of the 13 parameters $\boldsymbol{\phi}_{\bullet}, \boldsymbol{\theta}_{\bullet\bullet}, \boldsymbol{\psi}_{\bullet\bullet}$ directly (i.e., not using the backpropagation algorithm). The derivative of the ReLU function with respect to its input $\partial a[z] / \partial z$ is the indicator function $\mathbb{I}[z > 0]$, which returns one if the argument is greater than zero and zero otherwise.
+\end{mdframed}
+
+Derivatives with respect to the $\boldsymbol{\phi}_{\bullet}$ parameters:
+\begin{align*}
+    \frac{\partial y}{\partial \phi_{0}} & = 1                                                                                                                   \\
+    \frac{\partial y}{\partial \phi_{1}} & = \text{a}[\psi_{01} + \psi_{11}\text{a}[\theta_{01} + \theta_{11}x] + \psi_{21}\text{a}[\theta_{02} + \theta_{12}x]] \\
+    \frac{\partial y}{\partial \phi_{2}} & = \text{a}[\psi_{02} + \psi_{12}\text{a}[\theta_{01} + \theta_{11}x] + \psi_{22}\text{a}[\theta_{02} + \theta_{12}x]] \\
+\end{align*}
+
+with respect to the $\boldsymbol{\theta}_{\bullet\bullet}$ parameters:
+\begin{align*}
+    \frac{\partial y}{\partial \theta_{01}} & = \phi_{1}\psi_{11}\mathbb{I}[\theta_{01} + \theta_{11}x > 0] + \phi_{2}\psi_{12}\mathbb{I}[\theta_{01} + \theta_{11}x > 0]    \\
+    \frac{\partial y}{\partial \theta_{11}} & = x(\phi_{1}\psi_{11}\mathbb{I}[\theta_{01} + \theta_{11}x > 0] + \phi_{2}\psi_{12}\mathbb{I}[\theta_{01} + \theta_{11}x > 0]) \\
+    \frac{\partial y}{\partial \theta_{02}} & = \phi_{1}\psi_{21}\mathbb{I}[\theta_{02} + \theta_{12}x > 0] + \phi_{2}\psi_{22}\mathbb{I}[\theta_{02} + \theta_{12}x > 0]    \\
+    \frac{\partial y}{\partial \theta_{12}} & = x(\phi_{1}\psi_{21}\mathbb{I}[\theta_{02} + \theta_{12}x > 0] + \phi_{2}\psi_{22}\mathbb{I}[\theta_{02} + \theta_{12}x > 0])
+\end{align*}
+
+and with respect to the $\boldsymbol{\psi}_{\bullet\bullet}$ parameters:
+
+\begin{align*}
+    \frac{\partial y}{\partial \psi_{01}} & = \phi_{1}\mathbb{I}[\psi_{01} + \psi_{11}\text{a}[\theta_{01} + \theta_{11}x] + \psi_{21}\text{a}[\theta_{02} + \theta_{12}x] > 0]                                     \\
+    \frac{\partial y}{\partial \psi_{11}} & = \phi_{1}\text{a}[\theta_{01} + \theta_{11}x]\mathbb{I}[\psi_{01} + \psi_{11}\text{a}[\theta_{01} + \theta_{11}x] + \psi_{21}\text{a}[\theta_{02} + \theta_{12}x] > 0] \\
+    \frac{\partial y}{\partial \psi_{21}} & = \phi_{1}\text{a}[\theta_{02} + \theta_{12}x]\mathbb{I}[\psi_{01} + \psi_{11}\text{a}[\theta_{01} + \theta_{11}x] + \psi_{21}\text{a}[\theta_{02} + \theta_{12}x] > 0] \\
+    \frac{\partial y}{\partial \psi_{02}} & = \phi_{2}\mathbb{I}[\psi_{02} + \psi_{12}\text{a}[\theta_{01} + \theta_{11}x] + \psi_{22}\text{a}[\theta_{02} + \theta_{12}x] > 0]
+\end{align*}
+
+
+\subsection{}
+\begin{mdframed}
+    Find an expression for the final term in each of the five chains of derivates in equation~\ref{eq:7.12}:
+
+    \begin{align*}
+        \frac{\partial l_{i}}{\partial f_{2}} & = \frac{\partial h_{3}}{\partial f_{2}}\left(\frac{\partial f_{3}}{\partial h_{3}}\frac{\partial l_{i}}{\partial f_{3}}\right)                                                                                                                                                     \\
+        \frac{\partial l_{i}}{\partial h_{2}} & = \frac{\partial f_{2}}{\partial h_{2}}\left(\frac{\partial h_{3}}{\partial f_{2}}\frac{\partial f_{3}}{\partial h_{3}}\frac{\partial l_{i}}{\partial f_{3}}\right)                                                                                                                \\
+        \frac{\partial l_{i}}{\partial f_{1}} & = \frac{\partial h_{2}}{\partial f_{1}}\left(\frac{\partial f_{2}}{\partial h_{2}}\frac{\partial h_{3}}{\partial f_{2}}\frac{\partial f_{3}}{\partial h_{3}}\frac{\partial l_{i}}{\partial f_{3}}\right)                                                                           \\
+        \frac{\partial l_{i}}{\partial h_{1}} & = \frac{\partial f_{1}}{\partial h_{1}}\left(\frac{\partial h_{2}}{\partial f_{1}}\frac{\partial f_{2}}{\partial h_{2}}\frac{\partial h_{3}}{\partial f_{2}}\frac{\partial f_{3}}{\partial h_{3}}\frac{\partial l_{i}}{\partial f_{3}}\right)                                      \\
+        \frac{\partial l_{i}}{\partial f_{0}} & = \frac{\partial h_{1}}{\partial f_{0}}\left(\frac{\partial f_{1}}{\partial h_{1}}\frac{\partial h_{2}}{\partial f_{1}}\frac{\partial f_{2}}{\partial h_{2}}\frac{\partial h_{3}}{\partial f_{2}}\frac{\partial f_{3}}{\partial h_{3}}\frac{\partial l_{i}}{\partial f_{3}}\right) \\
+        \tag{7.12}
+        \label{eq:7.12}
+    \end{align*}
+\end{mdframed}
+
+Given:
+
+\begin{align*}
+    f_{0} & = \beta_{0} + \omega_{0}\cdot x_{i} \\
+    h_{1} & = \text{sin}[f_{0}]                 \\
+    f_{1} & = \beta_{1} + \omega_{1}\cdot h_{1} \\
+    h_{2} & = \text{exp}[f_{1}]                 \\
+    f_{2} & = \beta_{2} + \omega_{2}\cdot h_{2} \\
+    h_{3} & = \text{cos}[f_{2}]                 \\
+    f_{3} & = \beta_{3} + \omega_{3}\cdot h_{3} \\
+    l_{i} & = (y_{i} - f_{3})^{2}
+\end{align*}
+
+then:
+
+\begin{align*}
+    \frac{\partial h_{3}}{\partial f_{2}} & = -\text{sin}[f_{2}]                                                                                  \\
+    \frac{\partial f_{3}}{\partial h_{3}} & = \omega_{3}                                                                                          \\
+    \frac{\partial l_{i}}{\partial f_{3}} & = -2(y_{i} - f_{3})                                                                                   \\
+    \frac{\partial l_{i}}{\partial f_{2}} & = -\text{sin}[f_{2}](\omega_{3}\cdot -2(y_{i} - f_{3})) = 2\omega_{3}\text{sin}[f_{2}](y_{i} - f_{3}) \\
+\end{align*}
+
+For the second term:
+
+\begin{align*}
+    \frac{\partial f_{2}}{\partial h_{2}} & = \omega_{2}                                            \\
+    \frac{\partial l_{i}}{\partial h_{2}} & = 2\omega_{2}\omega_{3}\text{sin}[f_{2}](y_{i} - f_{3}) \\
+\end{align*}
+
+For the third term:
+
+\begin{align*}
+    \frac{\partial h_{2}}{\partial f_{1}} & = \text{exp}[f_{1}]                                                      \\
+    \frac{\partial l_{i}}{\partial f_{1}} & = 2\omega_{2}\omega_{3}\text{sin}[f_{2}](y_{i} - f_{3})\text{exp}[f_{1}]
+\end{align*}
+
+For the fourth term:
+
+\begin{align*}
+    \frac{\partial f_{1}}{\partial h_{1}} & = \omega_{1}                                                                       \\
+    \frac{\partial l_{i}}{\partial h_{1}} & = 2\omega_{1}\omega_{2}\omega_{3}\text{sin}[f_{2}](y_{i} - f_{3})\text{exp}[f_{1}]
+\end{align*}
+
+For the final term:
+
+\begin{align*}
+    \frac{\partial h_{1}}{\partial f_{0}} & = \text{cos}[f_{0}]                                                                                           \\
+    \frac{\partial l_{i}}{\partial f_{0}} & = 2\omega_{0}\omega_{1}\omega_{2}\omega_{3}\text{sin}[f_{2}](y_{i} - f_{3})\text{exp}[f_{1}]\text{cos}[f_{0}]
+\end{align*}
+\newpage
+\subsection{}
+\begin{mdframed}
+    What are the sizes of each term in equation~\ref{eq:7.19}?
+
+    \begin{equation}
+        \frac{\partial l_{i}}{\partial \mathbf{f}_{0}} = \frac{\partial \mathbf{h}_{1}}{\partial \mathbf{f}_{0}}\frac{\partial \mathbf{f}_{1}}{\partial \mathbf{h}_{1}} \left(\frac{\partial \mathbf{h}_{2}}{\partial \mathbf{f}_{1}}\frac{\partial \mathbf{f}_{2}}{\partial \mathbf{h}_{2}}\frac{\partial \mathbf{h}_{3}}{\partial \mathbf{f}_{2}}\frac{\partial \mathbf{f}_{3}}{\partial \mathbf{h}_{3}}\frac{\partial l_{i}}{\partial \mathbf{f}_{3}} \right)
+        \tag{7.19}
+        \label{eq:7.19}
+    \end{equation}
+\end{mdframed}
+
+\begin{itemize}
+    \item $\frac{\partial l_{i}}{\partial \mathbf{f}_{0}}$: $D_{1} \times 1$
+    \item $\frac{\partial \mathbf{h}_{1}}{\partial \mathbf{f}_{0}}$: $D_{1} \times D_{1}$ (number of hidden units in the first layer)
+    \item $\frac{\partial \mathbf{f}_{1}}{\partial \mathbf{h}_{1}}$: $D_{1} \times D_{2}$
+    \item $\frac{\partial \mathbf{h}_{2}}{\partial \mathbf{f}_{1}}$:$D_{2} \times D_{2}$ (number of hidden units in the second layer)
+    \item $\frac{\partial \mathbf{f}_{2}}{\partial \mathbf{h}_{2}}$:$D_{2} \times D_{3}$
+    \item $\frac{\partial \mathbf{h}_{3}}{\partial \mathbf{f}_{2}}$: $D_{3} \times D_{3}$ (number of hidden units in the third layer)
+    \item $\frac{\partial \mathbf{f}_{3}}{\partial \mathbf{h}_{3}}$: $D_{3} \times D_{f}$
+    \item $\frac{\partial l_{i}}{\partial \mathbf{f}_{3}}$: $D_{f} \times 1$ where $D_{f}$ is the dimensionality of the model output $\mathbf{f}_{3}$
+\end{itemize}
+
+\subsection{}
+\begin{mdframed}
+    Calculate the derivate of $\partial l_{i} / \partial \mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]$ for the least squares loss function:
+
+    \begin{equation*}
+        l_{i} = (y_{i} - \mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}])^{2}
+    \end{equation*}
+\end{mdframed}
+
+\begin{equation*}
+    \partial l_{i} / \partial \mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}] = -2(y_{i} - \mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}])
+\end{equation*}
+
+\subsection{}
+\begin{mdframed}
+    Calculate the derivate of $\partial l_{i} / \partial \mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]$ for the binary classification loss function:
+
+    \begin{equation*}
+        l_{i} = -(1-y_{i})\log(1-\text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]]) - y_{i}\log(\text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]])
+    \end{equation*}
+
+    where $\text{sig}[z] = 1/(1 + \exp(-z))$ is the sigmoid function.
+\end{mdframed}
+
+The derivative of the sigmoid function is given by:
+
+\begin{equation*}
+    \frac{\partial \text{sig}[z]}{\partial z} = \text{sig}[z](1 - \text{sig}[z])
+\end{equation*}
+
+Therefore, differentiating $-y_{i}\log(\text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]])$:
+
+\begin{equation*}
+    -y_{i}\frac{1}{\text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]]}\cdot \text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]](1 - \text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]]) = -y_{i}(1 - \text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]])
+\end{equation*}
+
+differentiating $-(1-y_{i})\log(1-\text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]])$:
+
+\begin{equation*}
+    -(1-y_{i})\frac{-1}{1 - \text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]]}\cdot \text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]](1 - \text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]]) = (1-y_{i})\text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]]
+\end{equation*}
+
+Combining the two terms we get:
+
+\begin{equation*}
+    \frac{\partial l_{i}}{\partial \mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]} = (1-y_{i})\text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]]-y_{i}(1 - \text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]])
+\end{equation*}
+
+Which simplifies to:
+
+\begin{equation*}
+    \frac{\partial l_{i}}{\partial \mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]} = \text{sig}[\mathbf{f}[\mathbf{x}_{i}, \boldsymbol{\phi}]] - y_{i}
+\end{equation*}
+
+
+\subsection{}
+\begin{mdframed}
+    Show that for $\mathbf{z} = \boldsymbol{\beta} + \boldsymbol{\Omega}\mathbf{h}$:
+
+    \begin{equation*}
+        \frac{\partial \mathbf{z}}{\partial \mathbf{h}} = \boldsymbol{\Omega}^{T}
+    \end{equation*}
+
+    where $\partial \mathbf{z} / \partial \mathbf{h}$ is a matrix containing the terms $\partial z_{i} / \partial h_{j}$ in its $i$-th row and $j$-th column. To do this, first find an expression for the constituent elements $\partial z_{i} / \partial h_{j}$, and then consider the form that the matrix $\partial \mathbf{z} / \partial \mathbf{h}$ must take.
+\end{mdframed}
+
+Each $z_{i}$ is given by:
+
+\begin{equation*}
+    z_{i} = \beta_{i} + \sum_{j} \omega_{ij}h_{j}
+\end{equation*}
+
+The derivative of $z_{i}$ with respect to $h_{j}$ is:
+
+\begin{equation*}
+    \frac{\partial z_{i}}{\partial h_{j}} = \omega_{ij}
+\end{equation*}
+
+This will be at the $i$-th row and $j$-th column of the matrix $\partial \mathbf{z} / \partial \mathbf{h}$, which is the transpose of $\boldsymbol{\Omega}$.
+
+\subsection{}
+\begin{mdframed}
+    Consider the case where we use the logistic sigmoid as an activation function, so $h = \text{sig}[f]$. Compute the derivate $\partial h / \partial f$ for this activation function. What happens to the derivate when the input takes (i) a large positive value and (ii) a large negative value?
+\end{mdframed}
+
+The derivative of the sigmoid function is given by:
+
+\begin{equation*}
+    \frac{\partial \text{sig}[f]}{\partial z} = \text{sig}[f](1 - \text{sig}[f])
+\end{equation*}
+
+As f approaches a large positive value, the sigmoid function approaches 1, and the derivative approaches 0. As f approaches a large negative value, the sigmoid function approaches 0, and the derivative also approaches 0.
+
+\subsection{}
+\begin{mdframed}
+    Consider using (i) the Heaviside function and (ii) the rectangular function as activation functions:
+
+    \begin{equation*}
+        \text{Heaviside}[z] = \begin{cases}
+            0 & z < 0    \\
+            1 & z \geq 0
+        \end{cases}
+    \end{equation*}
+
+    and
+
+    \begin{equation*}
+        \text{rect}[z] = \begin{cases}
+            0 & z < 0           \\
+            1 & 0 \leq z \leq 1 \\
+            0 & z > 1
+        \end{cases}
+    \end{equation*}
+
+    Discuss why these functions are problematic for neural network training with gradient-based optimization methods.
+\end{mdframed}
+
+For the Heaviside function, the derivative is zero everywhere except at zero, which means that during backpropagation, the gradient signal used to update weights for inputs that do not exactly equal 0 will be 0, leading to no weight updates. This is known as the vanishing gradient problem. At $z=0$, the function is discontinuous, and its derivative is undefined. This makes it difficult to apply standard gradient-based optimization methods, as these rely on the ability to compute gradients everywhere in the input space.
+
+For the rectangular function, the rectangular function has a derivative of 0 almost everywhere, except at the discontinuities (at $z=0$ and $z=1$), where it is undefined. This leads to the vanishing gradient problem, where the gradient signal is lost, and weights are not updated effectively during training.
+
+\subsection{}
+\begin{mdframed}
+    Consider a loss function $l[\mathbf{f}]$ where $\mathbf{f} = \boldsymbol{\beta} + \boldsymbol{\Omega}\mathbf{h}$. We want to find how the loss $l$ changes when we change $\boldsymbol{\Omega}$, which we'll express with a matrix that contains the derivate $\partial l / \partial \Omega_{ij}$ at the $i$-th row and $j$-th column. Find an expression for $\partial f_{ij} / \partial \Omega_{ij}$, and, using the chain rule, show that:
+
+    \begin{equation*}
+        \frac{\partial l}{\partial \boldsymbol{\Omega}} = \frac{\partial l}{\partial \mathbf{f}}\mathbf{h}^{T}
+    \end{equation*}
+\end{mdframed}
+
+For any given component $f_{ij}$, we have:
+
+\begin{equation*}
+    f_{ij} = \beta_{i} + \sum_{k} \Omega_{ik}h_{k}
+\end{equation*}
+
+Therefore, the derivate of $f_{ij}$ with respect to a specific weight $\Omega_{ij}$ is:
+
+\begin{equation*}
+    \frac{\partial f_{ij}}{\partial \Omega_{ij}} = h_{j}
+\end{equation*}
+
+Using the chain rule, we have:
+
+\begin{equation*}
+    \frac{\partial l_{i}}{\partial \Omega_{ij}} = \frac{\partial l}{\partial f_{i}}\frac{\partial f_{i}}{\partial \Omega_{ij}} = \frac{\partial l}{\partial f_{ij}}h_{j}
+\end{equation*}
+
+This can be written in vector form as:
+
+\begin{equation*}
+    \frac{\partial l}{\partial \boldsymbol{\Omega}} = \frac{\partial l}{\partial \mathbf{f}}\mathbf{h}^{T}
+\end{equation*}
+
+\newpage
+\subsection{}
+\begin{mdframed}
+    Derive the equations for the  backward pass of the backpropagation algorithm for a network that uses leaky ReLU activations, which are defined as:
+
+    \begin{equation*}
+        \text{a}[z] = \text{ReLU}[z] = \begin{cases}
+            z             & z \geq 0 \\
+            \alpha\cdot z & z < 0
+        \end{cases}
+    \end{equation*}
+    where $\alpha$ is a small positive constant.
+\end{mdframed}
+
+The Leaky ReLU has a gradient of +1 when the input is greater than zero and $\alpha$ when it is less. The backpropagation equations (equation 7.23) will hence be the same, except for the update:
+
+\begin{equation*}
+    \frac{\partial l_{i}}{\partial \mathbf{f}_{k-1}} = \mathbb{I}[\mathbf{f}_{k-1} > 0] \odot \left(\boldsymbol{\Omega}_{k}^{T}\frac{\partial l_{i}}{\partial \mathbf{f}_{k}}\right) + \mathbb{I}[\mathbf{f}_{k-1} < 0] \odot \alpha\left(\boldsymbol{\Omega}_{k}^{T}\frac{\partial l_{i}}{\partial \mathbf{f}_{k}}\right)
+\end{equation*}
+
+\subsection{}
+\begin{mdframed}
+    Consider training a network with fifty layers, where we only have enough memory to store the pre-activations at every tenth hidden layer during the forward pass. Explain how to compute the derivatives in this situation using gradient checkpointing.
+\end{mdframed}
+
+Gradient checkpointing is a technique used to reduce memory usage during the training of deep neural networks by selectively storing only a subset of intermediate states during the forward pass. Then, during the backward pass, the algorithm recomputes the non-stored states as needed by re-executing the forward computations. This trade-off between computational overhead and memory usage is particularly useful when training very deep networks on hardware with limited memory.
+
+The advantage of gradient checkpointing is that it significantly lowers the memory required to store intermediate activations, making it feasible to train deeper networks on limited hardware. However, recomputing activations during the backward pass increases the overall computation time, and it requires modifications to the standard training loop to manage checkpoints and recompute activations as needed.
+
+\newpage
+\subsection{}
+\begin{mdframed}
+    This problem explores computing derivates on general acyclic computational graphs. Consider the function:
+
+    \begin{equation}
+        y = \text{exp}[\text{exp}[x] + \text{exp}[x]^{2}] + \text{sin}[\text{exp}[x] + \text{exp}[x]^{2}]
+        \tag{7.42}
+        \label{eq:7.42}
+    \end{equation}
+
+    We can break this down into a series of intermediate computations so that:
+
+    \begin{align*}
+        f_{1} & = \text{exp}[x]     \\
+        f_{2} & = f_{1}^{2}         \\
+        f_{3} & = f_{1} + f_{2}     \\
+        f_{4} & = \text{exp}[f_{3}] \\
+        f_{5} & = \text{sin}[f_{3}] \\
+        y     & = f_{4} + f_{5}
+    \end{align*}
+
+    Compute the derivate $\partial y / \partial x$ by \textit{reverse-mode differentiation} (i.e., backpropagation) using the chain rule. In other words, compute in order:
+
+    \begin{equation*}
+        \frac{\partial y}{\partial f_{5}}, \frac{\partial y}{\partial f_{4}}, \frac{\partial y}{\partial f_{3}}, \frac{\partial y}{\partial f_{2}}, \frac{\partial y}{\partial f_{1}}, \text{and} \frac{\partial y}{\partial x}
+    \end{equation*}
+
+    using the chain rule in each case to make use of the derivatives already computed.
+\end{mdframed}
+
+The derivatives are:
+
+\begin{align*}
+    \frac{\partial y}{\partial f_{5}} & = 1                                                                                                                                                                                                                                                            \\
+    \frac{\partial y}{\partial f_{4}} & = 1                                                                                                                                                                                                                                                            \\
+    \frac{\partial y}{\partial f_{3}} & = \frac{\partial y}{\partial f_{4}}\frac{\partial f_{4}}{\partial f_{3}} + \frac{\partial y}{\partial f_{5}}\frac{\partial f_{5}}{\partial f_{3}} = \text{exp}[f_{3}] + \text{cos}[f_{3}]                                                                      \\
+    \frac{\partial y}{\partial f_{2}} & = \frac{\partial y}{\partial f_{3}}\frac{\partial f_{3}}{\partial f_{2}} = \text{exp}[f_{3}]     + \text{cos}[f_{3}]                                                                                                                                           \\
+    \frac{\partial y}{\partial f_{1}} & = \frac{\partial y}{\partial f_{3}}\frac{\partial f_{3}}{\partial f_{1}} + \frac{\partial y}{\partial f_{2}}\frac{\partial f_{2}}{\partial f_{1}} =           \text{exp}[f_{3}]     + \text{cos}[f_{3}]  + 2f_{1}(\text{exp}[f_{3}]     + \text{cos}[f_{3}]  ) \\
+    \frac{\partial y}{\partial x}     & = \frac{\partial y}{\partial f_{1}}\frac{\partial f_{1}}{\partial x} = \text{exp}[f_{3}]     + \text{cos}[f_{3}]  + 2f_{1}(\text{exp}[f_{3}]     + \text{cos}[f_{3}]  )\text{exp}[f_{1}]
+\end{align*}
+
+\null
+\subsection{}
+\begin{mdframed}
+    For the same function in problem~\ref{eq:7.42}, compute the derivative $\partial y / \partial x$ by \textit{forward-mode differentiation} using the chain rule. In other words, compute in order:
+
+    \begin{equation*}
+        \frac{\partial f_{1}}{\partial x}, \frac{\partial f_{2}}{\partial x}, \frac{\partial f_{3}}{\partial x}, \frac{\partial f_{4}}{\partial x}, \frac{\partial f_{5}}{\partial x}, \text{and} \frac{\partial y}{\partial x}
+    \end{equation*}
+
+    using the chain rule in each case to make use of the derivatives already computed. Why do we not use forward-mode differentiation when we calculate the parameter gradients for deep networks?
+\end{mdframed}
+
+The derivatives are:
+
+\begin{align*}
+    \frac{\partial f_{1}}{\partial x} & = \text{exp}[x]                                                                                                                                                                                                                     \\
+    \frac{\partial f_{2}}{\partial x} & = \frac{\partial f_{2}}{\partial f_{1}}\frac{\partial f_{1}}{\partial x} = 2f_{1}\text{exp}[x]                                                                                                                                      \\
+    \frac{\partial f_{3}}{\partial x} & = \frac{\partial f_{3}}{\partial f_{1}}\frac{\partial f_{1}}{\partial x} + \frac{\partial f_{3}}{\partial f_{2}}\frac{\partial f_{2}}{\partial x} = \text{exp}[x](1 + 2f_{1})                                                       \\
+    \frac{\partial f_{4}}{\partial x} & = \frac{\partial f_{4}}{\partial f_{3}}\frac{\partial f_{3}}{\partial x} = \text{exp}[f_{3}]\text{exp}[x](1 + 2f_{1})                                                                                                               \\
+    \frac{\partial f_{5}}{\partial x} & = \frac{\partial f_{5}}{\partial f_{3}}\frac{\partial f_{3}}{\partial x} = \text{cos}[f_{3}]\text{exp}[x](1 + 2f_{1})                                                                                                               \\
+    \frac{\partial y}{\partial x}     & = \frac{\partial y}{\partial f_{4}}\frac{\partial f_{4}}{\partial x} + \frac{\partial y}{\partial f_{5}}\frac{\partial f_{5}}{\partial x} = \text{exp}[f_{3}]\text{exp}[x](1 + 2f_{1}) + \text{cos}[f_{3}]\text{exp}[x](1 + 2f_{1})
+\end{align*}
+
+Forward-mode differentiation would require a separate forward pass for each parameter to compute its gradient, leading to a significant computational and memory burden in deep networks. Reverse-mode differentiation, on the other hand, allows for the efficient computation of all parameter gradients in a single backward pass following a forward pass, leveraging the chain rule in a manner that's particularly well-suited to the architectures of deep networks.
+
+\subsection{}
+\begin{mdframed}
+    Consider a random variable $a$ with variance $\sigma^{2}$ and a symmetrical distribution around the mean 0. Prove that if we pass this variable through the ReLU function, then the second moment of the transformed variable is $\mathbb{E}[b^{2}] = \sigma^{2}/2$.
+\end{mdframed}
+
+If $b = \text{ReLU}[a] = \max(0, a)$, then the second moment of $b$ is given by:
+
+\begin{equation*}
+    \mathbb{E}[b^{2}] = \mathbb{E}[(\max(0, a))^{2}] = \mathbb{E}[a^{2}\cdot \mathbb{I}(a > 0)]
+\end{equation*}
+
+Since the distribution of $a$ is symmetrical around 0 and the variance is $\sigma^{2}$, the expected value of $a^{2}$, which is the second moment of $a$, equals the variance (because the mean is 0). Considering that the probability of $a$ being positive is 0.5, we have:
+
+\begin{equation*}
+    \mathbb{E}[b^{2}] = \mathbb{E}[a^{2}\cdot \mathbb{I}(a > 0)] = \frac{1}{2}\mathbb{E}[a^{2}] = \frac{1}{2}\sigma^{2}
+\end{equation*}
+
+as required.
+
+\subsection{}
+\begin{mdframed}
+    What would you expect to happen if we initialized all of the weights and biases
+    in the network to zero?
+\end{mdframed}
+
+When weights and biases are initialized to zero, the activation functions in the network (especially if they are symmetric around the origin, like the sigmoid or tanh functions) will output zeros (or constant values for biases) in the forward pass. During the backward pass, the derivative of the loss with respect to the weights will also be zero, given the derivative of the activation function and the gradient of the loss. This results in no updates being made to the weights and biases during training, effectively halting the learning process. Additionally, starting with zero weights means the gradients start small and diminish even further as they are propagated back through the network, making learning exceedingly slow or non-existent for deep networks (vanishing gradients).
+
+\subsection{}
+\begin{mdframed}
+    Implement the code in figure 7.8 in PyTorch and plot the training loss as a
+    function of the number of epochs.
+\end{mdframed}
+
+Coding questions not included.
+
+\subsection{}
+\begin{mdframed}
+    Change the code in figure 7.8 to tackle a binary classification problem. You will
+    need to (i) change the targets y so they are binary, (ii) change the network to predict numbers between zero and one (iii) change the loss function appropriately.
+\end{mdframed}
+
+Coding questions not included.
+\end{document}

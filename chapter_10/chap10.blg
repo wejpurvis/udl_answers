@@ -1,0 +1,4 @@
+[0] Config.pm:307> INFO - This is Biber 2.19
+[0] Config.pm:310> INFO - Logfile is 'chap10.blg'
+[35] biber-darwin:340> INFO - === Thu Apr 11, 2024, 11:18:34
+[43] Biber.pm:419> INFO - Reading 'chap10.bcf'
