@@ -117,10 +117,31 @@
     \end{equation*}
 \end{mdframed}
 
+In a 1D mixture of Gaussians, the latent variable $z$ is discrete, and the prior $P(z)$ is a categorical distribution with one probability $\lambda_n$ for each possible valye of $z$. The likelihood $P(x | z =n)$ of the data $x$ given that the latent variable takes value $n$ is normally distributed with mean $\mu_n$ and variance $\sigma_n^2$. The marginal distribution of the data $P(x)$ is obtained by summing over all possible values of the latent variable.
+
+Therefore, since the mixing coefficients must sum to 1, $\lambda_5 = 1 - \sum_{i=1}^{4} \lambda_i$, meaning that there 4 independent mixing coefficients. Each Gaussian component has two parameters, the mean and the variance, so there are $5 \times 2 = 10$ parameters in total. This gives a total of $4+10 = 14$ parameters.
+
+For the ranges of these values, the mixing coefficients must be non-negative and sum to 1, so $0 \leq \lambda_i \leq 1$ and $\sum_{i=1}^{n} \lambda_i = 1$. The means $\mu_i$ can take any real value, and the variances $\sigma_i^2$ must be positive, so $\sigma_i^2 > 0$.
+
 \subsection{}
 \begin{mdframed}
     A function is concave if its second derivative is less than or equal to zero everywhere. Show that this is true for the function $g(x) = \log(x)$.
 \end{mdframed}
+
+The first derivative of $g(x) = \log(x)$ is:
+
+\begin{equation*}
+    \frac{d}{dx} \log(x) = \frac{1}{x}
+\end{equation*}
+
+The second derivative is:
+
+\begin{equation*}
+    \frac{d^{2}}{dx^{2}} \log(x) = -\frac{1}{x^{2}}
+\end{equation*}
+
+Since the second derivative is negative for all $x > 0$, the function $g(x) = \log(x)$ is concave for $x > 0$.
+\newpage
 
 \subsection{}
 \begin{mdframed}
@@ -134,6 +155,28 @@
     A function is convex if its second derivative is greater than or equal to zero everywhere. Show that the function $g(x) = x^{2n}$ is convex for arbitrary $n \in [1,2, \dots]$. Use this result with Jensen's inequality to show that the square of the mean $\mathbb{E}[x]$ of a distribution $P(x)$ must be less than or equal to its second moment $\mathbb{E}[x^{2}]$.
 \end{mdframed}
 
+The first derivative of $g(x) = x^{2n}$ is:
+
+\begin{equation*}
+    \frac{d}{dx} x^{2n} = 2nx^{2n-1}
+\end{equation*}
+
+The second derivative is:
+
+\begin{equation*}
+    \frac{d^{2}}{dx^{2}} x^{2n} = 2n(2n-1)x^{2n-2}
+\end{equation*}
+
+Where $n \geq 1$, the second derivative is positive for all $x \in \mathbb{R}$ since the prefactor $2n(2n-1)$ is positive. Therefore, the function $g(x) = x^{2n}$ is convex for $n \in [1,2, \dots]$.
+
+Applying Jensen's inequality to the convex function $g(x) = x^{2}$, we have:
+
+\begin{equation*}
+    \mathbb{E}[x^{2}] \geq \left( \mathbb{E}[x] \right)^{2}
+\end{equation*}
+
+This states that the mean of a distribution $P(x)$ squared is less than or equal to the second moment of the distribution.
+
 \subsection{}
 \begin{mdframed}
     Show that the ELBO, as expressed in equation 17.18, can alternatively be derived from the KL divergence between the variational distribution $q(\mathbf{z}| \mathbf{x})$ and the true posterior distribution $P(\mathbf{z}|\mathbf{x}, \boldsymbol{\phi})$:
@@ -145,6 +188,11 @@
 
     Start by using Bayes' rule (equation 17.19).
 \end{mdframed}
+
+\begin{align*}
+    D_{KL}[q(\mathbf{z}|\mathbf{x})||P(\mathbf{z}|\mathbf{x}, \boldsymbol{\phi})] & = \int q(\mathbf{z}|\mathbf{x}) \log \left[ \frac{q(\mathbf{z}|\mathbf{x})}{P(\mathbf{z}|\mathbf{x}, \boldsymbol{\phi})} \right] d\mathbf{z} \\
+\end{align*}
+
 
 \subsection{}
 \begin{mdframed}
